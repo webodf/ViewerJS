@@ -57,11 +57,39 @@ else ( IS_DIRECTORY $ENV{VIEWERJS_DOWNLOAD_DIR} )
 endif ( IS_DIRECTORY $ENV{VIEWERJS_DOWNLOAD_DIR} )
 MESSAGE ( STATUS "external downloads will be stored/expected in: ${EXTERNALS_DOWNLOAD_DIR}" )
 
+SET ( VIEWER_BUILD_DIR ${CMAKE_BINARY_DIR}/viewer )
+FILE ( MAKE_DIRECTORY ${VIEWER_BUILD_DIR})
+
 ExternalProject_Add(
     WebODF
     GIT_REPOSITORY git@gitorious.org:webodf/webodf.git
-    UPDATE_COMMAND ""
-    INSTALL_COMMAND ""
-    ALWAYS 0
+    UPDATE_COMMAND git pull origin master
+    BUILD_COMMAND make viewerbuilddir-target
+    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_BINARY_DIR}/WebODF-Prefix/src/WebODF-build/viewer/ ${VIEWER_BUILD_DIR}
 )
 
+ExternalProject_Add(
+    PDFjs
+    GIT_REPOSITORY git@github.com:mozilla/pdf.js.git
+    UPDATE_COMMAND git pull
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND node ${CMAKE_BINARY_DIR}/PDFjs-Prefix/src/PDFjs/make.js generic
+    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/PDFjs-Prefix/src/PDFjs/build/generic/build/pdf.js ${VIEWER_BUILD_DIR}/pdf.js
+)
+
+add_custom_command(
+    OUTPUT ${VIEWER_BUILD_DIR}/PDFViewerPlugin.js
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/PluginLoader.js ${VIEWER_BUILD_DIR}/PluginLoader.js
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/PDFViewerPlugin.js ${VIEWER_BUILD_DIR}/PDFViewerPlugin.js
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/TextLayerBuilder.js ${VIEWER_BUILD_DIR}/TextLayerBuilder.js
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/PDFViewerPlugin.css ${VIEWER_BUILD_DIR}/PDFViewerPlugin.css
+    COMMAND ${CMAKE_COMMAND} -E echo ${VIEWER_BUILD_DIR}
+)
+
+
+add_custom_target(Viewer ALL
+    DEPENDS
+    ${VIEWER_BUILD_DIR}/PDFViewerPlugin.js
+    WebODF
+    PDFjs
+)
