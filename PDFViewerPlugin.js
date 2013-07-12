@@ -218,7 +218,8 @@ function PDFViewerPlugin() {
     };
 
     this.isSlideshow = function () {
-        return false;
+        // A very simple but generally true guess - if the width is greater than the height, treat it as a slideshow
+        return pageWidth > pageHeight;
     };
 
     this.onLoad = function () {};
@@ -255,7 +256,7 @@ function PDFViewerPlugin() {
         self.setZoomLevel(zoomLevel);
     };
 
-    this.fitToContainingElement = function (width, height) {
+    this.fitToPage = function (width, height) {
         var zoomLevel = width / pageWidth;
         if (height / pageHeight < zoomLevel) {
             zoomLevel = height / pageHeight;
