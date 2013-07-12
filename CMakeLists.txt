@@ -59,13 +59,17 @@ MESSAGE ( STATUS "external downloads will be stored/expected in: ${EXTERNALS_DOW
 
 SET ( VIEWER_BUILD_DIR ${CMAKE_BINARY_DIR}/viewer )
 FILE ( MAKE_DIRECTORY ${VIEWER_BUILD_DIR})
+SET ( VIEWERZIP ${CMAKE_BINARY_DIR}/Viewer.js-${VIEWERJS_VERSION}.zip)
+SET ( WEBODF_SOURCE_DIR ${CMAKE_BINARY_DIR}/WebODF-Prefix/src/WebODF )
+SET ( WEBODF_BUILD_DIR ${CMAKE_BINARY_DIR}/WebODF-Prefix/src/WebODF-build )
+SET ( PDFJS_SOURCE_DIR ${CMAKE_BINARY_DIR}/PDFjs-Prefix/src/PDFjs )
 
 ExternalProject_Add(
     WebODF
     GIT_REPOSITORY git@gitorious.org:webodf/webodf.git
     UPDATE_COMMAND git pull origin master
     BUILD_COMMAND make viewerbuilddir-target
-    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_BINARY_DIR}/WebODF-Prefix/src/WebODF-build/viewer/ ${VIEWER_BUILD_DIR}
+    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory ${WEBODF_BUILD_DIR}/viewer/ ${VIEWER_BUILD_DIR}
 )
 
 ExternalProject_Add(
@@ -73,23 +77,25 @@ ExternalProject_Add(
     GIT_REPOSITORY git@github.com:mozilla/pdf.js.git
     UPDATE_COMMAND git pull
     CONFIGURE_COMMAND ""
-    BUILD_COMMAND node ${CMAKE_BINARY_DIR}/PDFjs-Prefix/src/PDFjs/make.js generic
-    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/PDFjs-Prefix/src/PDFjs/build/generic/build/pdf.js ${VIEWER_BUILD_DIR}/pdf.js
+    BUILD_COMMAND node ${PDFJS_SOURCE_DIR}/make.js generic
+    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy ${PDFJS_SOURCE_DIR}/build/generic/build/pdf.js ${VIEWER_BUILD_DIR}/pdf.js
 )
 
 add_custom_command(
-    OUTPUT ${VIEWER_BUILD_DIR}/PDFViewerPlugin.js
+    OUTPUT ${VIEWERZIP}
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/PluginLoader.js ${VIEWER_BUILD_DIR}/PluginLoader.js
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/PDFViewerPlugin.js ${VIEWER_BUILD_DIR}/PDFViewerPlugin.js
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/TextLayerBuilder.js ${VIEWER_BUILD_DIR}/TextLayerBuilder.js
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/PDFViewerPlugin.css ${VIEWER_BUILD_DIR}/PDFViewerPlugin.css
-    COMMAND ${CMAKE_COMMAND} -E echo ${VIEWER_BUILD_DIR}
+    COMMAND node ARGS ${WEBODF_SOURCE_DIR}/webodf/lib/runtime.js ${WEBODF_SOURCE_DIR}/webodf/tools/zipdir.js
+    ${VIEWER_BUILD_DIR}
+    ${VIEWERZIP}
 )
 
 
 add_custom_target(Viewer ALL
     DEPENDS
-    ${VIEWER_BUILD_DIR}/PDFViewerPlugin.js
+    ${VIEWERZIP}
     WebODF
     PDFjs
 )
