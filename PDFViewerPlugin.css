@@ -33,4 +33,5 @@
 }
 
 ::selection { background:rgba(0,0,255,0.3); }
+::-moz-selection { background:rgba(0,0,255,0.3); }
 
