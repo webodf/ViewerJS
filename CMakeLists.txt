@@ -32,8 +32,6 @@
 # 
 
 project (Viewer.js)
-# version 2.8.2 is needed to have support for zip files in external projects
-# issues with version 2.8.4 on Windows makes us test for a higher version
 cmake_minimum_required(VERSION 2.8.6)
 
 # At this point, the version number that is used throughout is defined
@@ -60,25 +58,24 @@ MESSAGE ( STATUS "external downloads will be stored/expected in: ${EXTERNALS_DOW
 SET ( VIEWER_BUILD_DIR ${CMAKE_BINARY_DIR}/viewer )
 FILE ( MAKE_DIRECTORY ${VIEWER_BUILD_DIR})
 SET ( VIEWERZIP ${CMAKE_BINARY_DIR}/Viewer.js-${VIEWERJS_VERSION}.zip)
-SET ( WEBODF_SOURCE_DIR ${CMAKE_BINARY_DIR}/WebODF-Prefix/src/WebODF )
-SET ( WEBODF_BUILD_DIR ${CMAKE_BINARY_DIR}/WebODF-Prefix/src/WebODF-build )
-SET ( PDFJS_SOURCE_DIR ${CMAKE_BINARY_DIR}/PDFjs-Prefix/src/PDFjs )
+SET ( WEBODF_SOURCE_DIR ${CMAKE_BINARY_DIR}/WebODF-source )
 
 ExternalProject_Add(
     WebODF
-    GIT_REPOSITORY git@gitorious.org:webodf/webodf.git
+    GIT_REPOSITORY https://git.gitorious.org/webodf/webodf.git
+    SOURCE_DIR ${WEBODF_SOURCE_DIR}
     UPDATE_COMMAND git pull origin master
     BUILD_COMMAND make viewerbuilddir-target
-    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory ${WEBODF_BUILD_DIR}/viewer/ ${VIEWER_BUILD_DIR}
+    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/viewer/ ${VIEWER_BUILD_DIR}
 )
 
 ExternalProject_Add(
     PDFjs
-    GIT_REPOSITORY git@github.com:mozilla/pdf.js.git
+    GIT_REPOSITORY https://github.com/mozilla/pdf.js.git
     UPDATE_COMMAND git pull
     CONFIGURE_COMMAND ""
-    BUILD_COMMAND node ${PDFJS_SOURCE_DIR}/make.js generic
-    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy ${PDFJS_SOURCE_DIR}/build/generic/build/pdf.js ${VIEWER_BUILD_DIR}/pdf.js
+    BUILD_COMMAND node <SOURCE_DIR>/make.js generic
+    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/build/generic/build/pdf.js ${VIEWER_BUILD_DIR}/pdf.js
 )
 
 add_custom_command(
