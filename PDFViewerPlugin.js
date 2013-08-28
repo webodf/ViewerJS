@@ -85,6 +85,10 @@ function PDFViewerPlugin() {
         pageHeight,
         createdPageCount = 0;
 
+    function scrollIntoView(elem) {
+        elem.parentNode.scrollTop = elem.offsetTop;
+    }
+
     function isScrolledIntoView(elem) {
         var docViewTop = container.scrollTop,
             docViewBottom = docViewTop + container.clientHeight,
@@ -311,6 +315,6 @@ function PDFViewerPlugin() {
     };
 
     this.showPage = function (n) {
-        domPages[n - 1].scrollIntoView();
+        scrollIntoView(domPages[n - 1]);
     };
 }
