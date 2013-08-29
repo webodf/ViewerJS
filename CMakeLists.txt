@@ -66,7 +66,7 @@ ExternalProject_Add(
     GIT_REPOSITORY https://git.gitorious.org/webodf/webodf.git
     GIT_TAG 57ef0fa0c79631e1e167c9d2ae8730fa24a5b2ac
     SOURCE_DIR ${WEBODF_SOURCE_DIR}
-    UPDATE_COMMAND git pull origin master
+    UPDATE_COMMAND ""
     BUILD_COMMAND make viewerbuilddir-target
     INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/viewer/ ${CMAKE_BINARY_DIR}/viewer
 )
@@ -75,7 +75,7 @@ ExternalProject_Add(
     PDFjs
     GIT_REPOSITORY https://github.com/mozilla/pdf.js.git
     GIT_TAG 0fc8bac7c0e27b9d164078c6c41e8e5eee138b33
-    UPDATE_COMMAND git pull
+    UPDATE_COMMAND ""
     CONFIGURE_COMMAND ""
     BUILD_COMMAND node <SOURCE_DIR>/make.js generic
     INSTALL_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/build/generic/build/pdf.js ${CMAKE_BINARY_DIR}/viewer/pdf.js COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/build/generic/build/pdf.worker.js ${CMAKE_BINARY_DIR}/viewer/pdf.worker.js
