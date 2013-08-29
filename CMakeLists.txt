@@ -35,7 +35,7 @@ project (Viewer.js)
 cmake_minimum_required(VERSION 2.8.6)
 
 # At this point, the version number that is used throughout is defined
-set(VIEWERJS_VERSION 0.1.0)
+set(VIEWERJS_VERSION 0.2.0)
 
 if (CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
   message(FATAL_ERROR "Compiling in the source directory is not supported. Use for example 'mkdir build; cd build; cmake ..'.")
@@ -63,6 +63,7 @@ SET ( WEBODF_SOURCE_DIR ${CMAKE_BINARY_DIR}/WebODF-source )
 ExternalProject_Add(
     WebODF
     GIT_REPOSITORY https://git.gitorious.org/webodf/webodf.git
+    GIT_TAG 0fc8bac7c0e27b9d164078c6c41e8e5eee138b33
     SOURCE_DIR ${WEBODF_SOURCE_DIR}
     UPDATE_COMMAND git pull origin master
     BUILD_COMMAND make viewerbuilddir-target
