@@ -55,7 +55,7 @@ else ( IS_DIRECTORY $ENV{VIEWERJS_DOWNLOAD_DIR} )
 endif ( IS_DIRECTORY $ENV{VIEWERJS_DOWNLOAD_DIR} )
 MESSAGE ( STATUS "external downloads will be stored/expected in: ${EXTERNALS_DOWNLOAD_DIR}" )
 
-SET ( VIEWER_BUILD_DIR ${CMAKE_BINARY_DIR}/viewer )
+SET ( VIEWER_BUILD_DIR ${CMAKE_BINARY_DIR}/Viewer.js )
 FILE ( MAKE_DIRECTORY ${VIEWER_BUILD_DIR})
 SET ( VIEWERZIP ${CMAKE_BINARY_DIR}/Viewer.js-${VIEWERJS_VERSION}.zip)
 SET ( WEBODF_SOURCE_DIR ${CMAKE_BINARY_DIR}/WebODF-source )
@@ -66,7 +66,7 @@ ExternalProject_Add(
     SOURCE_DIR ${WEBODF_SOURCE_DIR}
     UPDATE_COMMAND git pull origin master
     BUILD_COMMAND make viewerbuilddir-target
-    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/viewer/ ${VIEWER_BUILD_DIR}
+    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/viewer/ ${CMAKE_BINARY_DIR}/viewer
 )
 
 ExternalProject_Add(
@@ -75,11 +75,12 @@ ExternalProject_Add(
     UPDATE_COMMAND git pull
     CONFIGURE_COMMAND ""
     BUILD_COMMAND node <SOURCE_DIR>/make.js generic
-    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/build/generic/build/pdf.js ${VIEWER_BUILD_DIR}/pdf.js
+    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/build/generic/build/pdf.js ${CMAKE_BINARY_DIR}/viewer/pdf.js COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/build/generic/build/pdf.worker.js ${CMAKE_BINARY_DIR}/viewer/pdf.worker.js
 )
 
 add_custom_command(
     OUTPUT ${VIEWERZIP}
+    COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_BINARY_DIR}/viewer ${VIEWER_BUILD_DIR}
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/PluginLoader.js ${VIEWER_BUILD_DIR}/PluginLoader.js
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/PDFViewerPlugin.js ${VIEWER_BUILD_DIR}/PDFViewerPlugin.js
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/TextLayerBuilder.js ${VIEWER_BUILD_DIR}/TextLayerBuilder.js

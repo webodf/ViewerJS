@@ -207,7 +207,7 @@ function PDFViewerPlugin() {
             pluginCSS;
 
         init(function () {
-            PDFJS.disableWorker = true;
+            PDFJS.workerSrc = "./pdf.worker.js";
             PDFJS.getDocument(location).then(function loadPDF(doc) {
                 pdfDocument = doc;
                 container = viewContainer;
