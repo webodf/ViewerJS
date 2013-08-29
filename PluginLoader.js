@@ -29,8 +29,8 @@
  *
  * This license applies to this entire compilation.
  * @licend
- * @source: http://www.webodf.org/
- * @source: http://gitorious.org/webodf/webodf/
+ * @source: http://viewerjs.org/
+ * @source: http://github.com/thz/Viewer.js
  */
 
 /*global document, window, Viewer, ODFViewerPlugin, PDFViewerPlugin*/

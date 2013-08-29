@@ -28,7 +28,8 @@
 # 
 # This license applies to this entire compilation.
 # @licend
-# @source: http://thz.github.com/Viewer.js/
+# @source: http://viewerjs.org/
+# @source: http://github.com/thz/Viewer.js
 # 
 
 project (Viewer.js)
