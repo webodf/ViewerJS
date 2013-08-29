@@ -63,6 +63,7 @@ SET ( WEBODF_SOURCE_DIR ${CMAKE_BINARY_DIR}/WebODF-source )
 ExternalProject_Add(
     WebODF
     GIT_REPOSITORY https://git.gitorious.org/webodf/webodf.git
+    GIT_TAG 57ef0fa0c79631e1e167c9d2ae8730fa24a5b2ac
     SOURCE_DIR ${WEBODF_SOURCE_DIR}
     UPDATE_COMMAND git pull origin master
     BUILD_COMMAND make viewerbuilddir-target
