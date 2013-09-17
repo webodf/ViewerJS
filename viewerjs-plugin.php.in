@@ -1,10 +1,10 @@
 <?php
 
 /*
-Plugin Name: WebODF Viewer
-Version: @WEBODF_VERSION@
-Plugin URI: http://webodf.org/
-Description: Embed ODF in Wordpress
+Plugin Name: ViewerJS Plugin
+Version: @VIEWERJS_VERSION@
+Plugin URI: http://viewerjs.org/
+Description: Embed ODF and PDF in Wordpress
 Author: Tobias Hintze
 Author URI: http://kogmbh.com
 
@@ -26,14 +26,14 @@ through which recipients can access the Corresponding Source.
 $site_url = site_url();
 $this_plugin_url = plugins_url() .'/'. plugin_basename(dirname(__FILE__));
 
-function WebODF_ViewerAddPage() {
-	add_options_page('WebODF-Viewer Options', 'WebODF-Viewer', '8', 'webodf-viewer.php', 'WebODF_ViewerOptions');
+function ViewerJS_PluginAddPage() {
+	add_options_page('ViewerJS-Plugin Options', 'ViewerJS-Plugin', '8', 'viewerjs-plugin.php', 'ViewerJS_PluginOptions');
 }
 
-function WebODF_ViewerOptions() {
+function ViewerJS_PluginOptions() {
 	global $site_url;
 	$message = '';
-	$options = get_option('WebODF_ViewerSettings');
+	$options = get_option('ViewerJS_PluginSettings');
 	if ($_POST) {
 		if (isset($_POST['width'])) {
 			$options['width'] = $_POST['width'];
@@ -42,15 +42,15 @@ function WebODF_ViewerOptions() {
 			$options['height'] = $_POST['height'];
 		}
 
-		update_option('WebODF_ViewerSettings', $options);
+		update_option('ViewerJS_PluginSettings', $options);
 		$message = '<div class="updated"><p>width=' . $options['width'] .
 			' height=' . $options['height'] .'<strong>&nbsp; Options saved.</strong></p></div>';
 	}
 	echo '<div class="wrap">';
-	echo '<h2>WebODF-Viewer Options</h2>';
+	echo '<h2>ViewerJS-Plugin Options</h2>';
 	echo $message;
-	echo '<form method="post" action="options-general.php?page=webodf-viewer.php">';
-	echo "<p>You can adjut the width and height of the WebODF Viewer iframe here. This is a global setting.</p>";
+	echo '<form method="post" action="options-general.php?page=viewerjs-plugin.php">';
+	echo "<p>You can adjut the width and height of the Viewer iframe here. This is a global setting.</p>";
 	echo '<h4>Width-Height</h4>' . "\n";
 	echo '<table class="form-table">' . "\n";
 	echo '<tr><th scope="row">width</th><td>' . "\n";
@@ -67,35 +67,36 @@ function WebODF_ViewerOptions() {
 	echo '</div>';
 }
 
-function WebODF_ViewerLoadDefaults() {
+function ViewerJS_PluginLoadDefaults() {
 	$ret = array();
 	$ret['width'] = '450px';
 	$ret['height'] = '380px';
 	return $ret;
 }
 
-function WebODF_Viewer_activate() {
-	update_option('WebODF_ViewerSettings', WebODF_ViewerLoadDefaults());
+function ViewerJS_Plugin_activate() {
+	update_option('ViewerJS_PluginSettings', ViewerJS_PluginLoadDefaults());
 }
 
-register_activation_hook(__FILE__,'WebODF_Viewer_activate');
+register_activation_hook(__FILE__,'ViewerJS_Plugin_activate');
 
-function WebODF_Viewer_deactivate() {
-	delete_option('WebODF_ViewerSettings');
+function ViewerJS_Plugin_deactivate() {
+	delete_option('ViewerJS_PluginSettings');
 }
 
-register_deactivation_hook(__FILE__,'WebODF_Viewer_deactivate');
+register_deactivation_hook(__FILE__,'ViewerJS_Plugin_deactivate');
 
-add_action('admin_menu', 'WebODF_ViewerAddPage');
+add_action('admin_menu', 'ViewerJS_PluginAddPage');
 
 
-function mime_type_filter($mime_types) {
+function viewerjs_mime_type_filter($mime_types) {
     $mime_types['odt'] = 'application/vnd.oasis.opendocument.text';
     $mime_types['odp'] = 'application/vnd.oasis.opendocument.presentation';
     $mime_types['ods'] = 'application/vnd.oasis.opendocument.spreadsheet';
+    $mime_types['pdf'] = 'application/pdf';
     return $mime_types;
 }
-add_filter( 'upload_mimes', 'mime_type_filter');
+add_filter( 'upload_mimes', 'viewerjs_mime_type_filter');
 
 function mime_type_icon($icon_uri, $mime_type, $post_id) {
 	// this is bogus and not implemented
@@ -112,7 +113,7 @@ function mime_type_icon($icon_uri, $mime_type, $post_id) {
 }
 add_filter( 'wp_mime_type_icon', 'mime_type_icon', 10, 3);
 
-function webodf_media_send_to_editor($html, $send_id, $attachment) {
+function viewerjs_media_send_to_editor($html, $send_id, $attachment) {
 	$pid = $attachment['id'];
 
 	$post = get_post($pid, ARRAY_A);
@@ -120,16 +121,16 @@ function webodf_media_send_to_editor($html, $send_id, $attachment) {
 			// place shortcode
 			preg_match('/^http:\/\/[^\/]*(\/.*)$/', $attachment['url'], $matches);
 			$document_url = $matches[1];
-			return "[webodf_viewer ".$document_url."]";
+			return "[viewerjs_viewer ".$document_url."]";
 	}
 	return $html;
 }
-add_filter( 'media_send_to_editor', 'webodf_media_send_to_editor', 10, 3);
+add_filter( 'media_send_to_editor', 'viewerjs_media_send_to_editor', 10, 3);
 
 
 /*
 	TODO: introduce a smart switch on [post | attachment] scope
-		to skip webodf-embedding... (user might to simply link
+		to skip viewerjs-embedding... (user might to simply link
 		some documents)
 		For now: always use webodf for embedding, if this plugin
 		is enabled.
@@ -145,17 +146,17 @@ function field_filter($fields, $post_object) {
 
 		// insert document path
 		preg_match('/^http:\/\/[^\/]*(\/.*)$/', $post_object->guid, $matches);
-		$fields["webodf_document_url"] = array(
+		$fields["viewerjs_document_url"] = array(
 			"label" => __("Document URL"),
 			"input" => "text",
 			"value" => $matches[1]
 		);
-		$fields["webodf_embed"] = array(
+		$fields["viewerjs_embed"] = array(
 				"input" => "html",
 				"label" => "Embed with WebODF",
-				"html" => '<label for="attachments-'.$post_object->ID.'-webodf_embed"> '.
-				'<input type="checkbox" id="attachments-"'.$post_object->ID.'-webodf_embed" '.
-				' name="attachments['.$post_object->ID.'][webodf_embed]" value="1" checked="checked"/>Use WebODF?</label>'
+				"html" => '<label for="attachments-'.$post_object->ID.'-viewerjs_embed"> '.
+				'<input type="checkbox" id="attachments-"'.$post_object->ID.'-viewerjs_embed" '.
+				' name="attachments['.$post_object->ID.'][viewerjs_embed]" value="1" checked="checked"/>Use WebODF?</label>'
 				);
 	}
 	return $fields;
@@ -172,10 +173,10 @@ function field_save( $post ) {
 	$postid = $post;
 
 	if (! empty($_POST['attachments'])) {
-		if ($_POST['attachments'][$postid]['webodf_embed']) {
-			update_post_meta($postid, 'webodf_embed', "yes");
+		if ($_POST['attachments'][$postid]['viewerjs_embed']) {
+			update_post_meta($postid, 'viewerjs_embed', "yes");
 		} else {
-			update_post_meta($postid, 'webodf_embed', "no");
+			update_post_meta($postid, 'viewerjs_embed', "no");
 		}
 	}
 	return $post;
@@ -190,13 +191,13 @@ add_filter('edit_attachment', 'field_save', 10, 1);
 
 */
 
-function webodf_shortcode_handler($args) {
+function viewerjs_shortcode_handler($args) {
 	global $this_plugin_url;
 	$document_url = $args[0];
-	$options = get_option('WebODF_ViewerSettings');
+	$options = get_option('ViewerJS_PluginSettings');
 	$iframe_width = $options['width'];
 	$iframe_height = $options['height'];
-	return "<iframe src=\"$this_plugin_url/wv/" .
+	return "<iframe src=\"$this_plugin_url" .
 		'#' . $document_url .'" '.
 			"width=\"$iframe_width\" ".
 			"height=\"$iframe_height\" ".
@@ -204,6 +205,6 @@ function webodf_shortcode_handler($args) {
 			'webkitallowfullscreen="true" '.
 			'mozallowfullscreen="true"></iframe>';
 }
-add_shortcode('webodf_viewer', 'webodf_shortcode_handler');
+add_shortcode('viewerjs', 'viewerjs_shortcode_handler');
 
 ?>
