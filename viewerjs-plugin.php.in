@@ -4,11 +4,11 @@
 Plugin Name: ViewerJS Plugin
 Version: @VIEWERJS_VERSION@
 Plugin URI: http://viewerjs.org/
-Description: Embed ODF and PDF in Wordpress
+Description: Embed ODF and PDF in WordPress
 Author: Tobias Hintze
 Author URI: http://kogmbh.com
 
-This Wordpress plugin is free software: you can redistribute it
+This WordPress plugin is free software: you can redistribute it
 and/or modify it under the terms of the GNU Affero General Public License
 (GNU AGPL) as published by the Free Software Foundation, either version 3 of
 the License, or (at your option) any later version.  The code is distributed
@@ -23,15 +23,13 @@ through which recipients can access the Corresponding Source.
 
 */
 
-$site_url = site_url();
-$this_plugin_url = plugins_url() .'/'. plugin_basename(dirname(__FILE__));
+$viewerjs_plugin_url = plugins_url() .'/'. plugin_basename(dirname(__FILE__));
 
 function ViewerJS_PluginAddPage() {
 	add_options_page('ViewerJS-Plugin Options', 'ViewerJS-Plugin', '8', 'viewerjs-plugin.php', 'ViewerJS_PluginOptions');
 }
 
 function ViewerJS_PluginOptions() {
-	global $site_url;
 	$message = '';
 	$options = get_option('ViewerJS_PluginSettings');
 	if ($_POST) {
@@ -98,7 +96,7 @@ function viewerjs_mime_type_filter($mime_types) {
 }
 add_filter( 'upload_mimes', 'viewerjs_mime_type_filter');
 
-function mime_type_icon($icon_uri, $mime_type, $post_id) {
+function viewerjs_mime_type_icon($icon_uri, $mime_type, $post_id) {
 	// this is bogus and not implemented
 	if ($mime_type === 'application/vnd.oasis.opendocument.text') {
 		return $icon_uri;
@@ -109,95 +107,32 @@ function mime_type_icon($icon_uri, $mime_type, $post_id) {
 	} else {
 		return $icon_uri;
 	}
-	// return array($this_plugin_url . '/odf.png', 64, 64);
+	// return array($viewerjs_plugin_url . '/odf.png', 64, 64);
 }
-add_filter( 'wp_mime_type_icon', 'mime_type_icon', 10, 3);
+add_filter( 'wp_mime_type_icon', 'viewerjs_mime_type_icon', 10, 3);
 
 function viewerjs_media_send_to_editor($html, $send_id, $attachment) {
 	$pid = $attachment['id'];
 
 	$post = get_post($pid, ARRAY_A);
-	if (preg_match('/^application\/vnd\.oasis\.opendocument/', $post['post_mime_type'])) {
+	if (preg_match('/^application\/(vnd\.oasis\.opendocument|pdf)/', $post['post_mime_type'])) {
 			// place shortcode
 			preg_match('/^http:\/\/[^\/]*(\/.*)$/', $attachment['url'], $matches);
 			$document_url = $matches[1];
-			return "[viewerjs_viewer ".$document_url."]";
+			return "[viewerjs ".$document_url."]";
 	}
 	return $html;
 }
 add_filter( 'media_send_to_editor', 'viewerjs_media_send_to_editor', 10, 3);
 
 
-/*
-	TODO: introduce a smart switch on [post | attachment] scope
-		to skip viewerjs-embedding... (user might to simply link
-		some documents)
-		For now: always use webodf for embedding, if this plugin
-		is enabled.
-
-function field_filter($fields, $post_object) {
-	if ($post_object->post_parent > 0) {
-		// inside a post
-		$use_webodf = get_post_meta($post_object['post_parent'], 'use_webodf');
-	}
-
-	if (preg_match('/^application\/vnd\.oasis\.opendocument\.(text|presentation|spreadsheet)/',
-				$post_object->post_mime_type)) {
-
-		// insert document path
-		preg_match('/^http:\/\/[^\/]*(\/.*)$/', $post_object->guid, $matches);
-		$fields["viewerjs_document_url"] = array(
-			"label" => __("Document URL"),
-			"input" => "text",
-			"value" => $matches[1]
-		);
-		$fields["viewerjs_embed"] = array(
-				"input" => "html",
-				"label" => "Embed with WebODF",
-				"html" => '<label for="attachments-'.$post_object->ID.'-viewerjs_embed"> '.
-				'<input type="checkbox" id="attachments-"'.$post_object->ID.'-viewerjs_embed" '.
-				' name="attachments['.$post_object->ID.'][viewerjs_embed]" value="1" checked="checked"/>Use WebODF?</label>'
-				);
-	}
-	return $fields;
-}
-add_filter('attachment_fields_to_edit', 'field_filter', 10, 2);
-
-function field_save_legacy( $post, $attachment ) {
-	$postid = $post['post_ID'];
-	if (! $postid) $postid = $post['ID'];
-	return field_save($postid);
-}
-
-function field_save( $post ) {
-	$postid = $post;
-
-	if (! empty($_POST['attachments'])) {
-		if ($_POST['attachments'][$postid]['viewerjs_embed']) {
-			update_post_meta($postid, 'viewerjs_embed', "yes");
-		} else {
-			update_post_meta($postid, 'viewerjs_embed', "no");
-		}
-	}
-	return $post;
-}
-
-// legacy (wp < 3.5.1):
-add_filter('attachment_fields_to_save', 'field_save_legacy', 10, 2);
-
-// recent:
-add_filter('add_attachment', 'field_save', 10, 1);
-add_filter('edit_attachment', 'field_save', 10, 1);
-
-*/
-
 function viewerjs_shortcode_handler($args) {
-	global $this_plugin_url;
+	global $viewerjs_plugin_url;
 	$document_url = $args[0];
 	$options = get_option('ViewerJS_PluginSettings');
 	$iframe_width = $options['width'];
 	$iframe_height = $options['height'];
-	return "<iframe src=\"$this_plugin_url" .
+	return "<iframe src=\"$viewerjs_plugin_url" .
 		'#' . $document_url .'" '.
 			"width=\"$iframe_width\" ".
 			"height=\"$iframe_height\" ".

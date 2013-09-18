@@ -36,7 +36,7 @@ project (Viewer.js)
 cmake_minimum_required(VERSION 2.8.6)
 
 # At this point, the version number that is used throughout is defined
-set(VIEWERJS_VERSION 0.2.0)
+set(VIEWERJS_VERSION 0.2.1)
 
 if (CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
   message(FATAL_ERROR "Compiling in the source directory is not supported. Use for example 'mkdir build; cd build; cmake ..'.")
