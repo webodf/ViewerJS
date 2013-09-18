@@ -36,7 +36,7 @@ project (Viewer.js)
 cmake_minimum_required(VERSION 2.8.6)
 
 # At this point, the version number that is used throughout is defined
-set(VIEWERJS_VERSION 0.2.0)
+set(VIEWERJS_VERSION 0.2.1)
 
 if (CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
   message(FATAL_ERROR "Compiling in the source directory is not supported. Use for example 'mkdir build; cd build; cmake ..'.")
@@ -60,6 +60,9 @@ SET ( VIEWER_BUILD_DIR ${CMAKE_BINARY_DIR}/Viewer.js )
 FILE ( MAKE_DIRECTORY ${VIEWER_BUILD_DIR})
 SET ( VIEWERZIP ${CMAKE_BINARY_DIR}/Viewer.js-${VIEWERJS_VERSION}.zip)
 SET ( WEBODF_SOURCE_DIR ${CMAKE_BINARY_DIR}/WebODF-source )
+
+SET ( WORDPRESS_ZIP_DIR ${CMAKE_CURRENT_BINARY_DIR}/viewerjs-wordpress-${VIEWERJS_VERSION})
+SET ( WORDPRESSZIP ${WORDPRESS_ZIP_DIR}.zip)
 
 ExternalProject_Add(
     WebODF
@@ -100,3 +103,23 @@ add_custom_target(Viewer ALL
     WebODF
     PDFjs
 )
+
+configure_file(viewerjs-plugin.php.in ${CMAKE_CURRENT_BINARY_DIR}/viewerjs-plugin.php)
+
+add_custom_command(
+    OUTPUT ${WORDPRESSZIP}
+    COMMAND ${CMAKE_COMMAND} -E remove_directory ${WORDPRESS_ZIP_DIR}
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${VIEWER_BUILD_DIR} ${WORDPRESS_ZIP_DIR}
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/viewerjs-plugin-README.txt ${WORDPRESS_ZIP_DIR}
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/viewerjs-plugin.php ${WORDPRESS_ZIP_DIR}
+    COMMAND node ARGS ${WEBODF_SOURCE_DIR}/webodf/lib/runtime.js ${WEBODF_SOURCE_DIR}/webodf/tools/zipdir.js
+    ${WORDPRESS_ZIP_DIR}
+    ${WORDPRESSZIP}
+)
+
+add_custom_target(wordpress-plugin ALL
+    DEPENDS
+    ${WORDPRESSZIP}
+    Viewer
+)
+
