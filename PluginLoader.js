@@ -57,6 +57,7 @@ function loadDocument(documentUrl) {
         var extension = documentUrl.split('.').pop(),
             Plugin;
         extension = extension.toLowerCase();
+        
         switch (extension) {
         case 'odt':
         case 'odp':
