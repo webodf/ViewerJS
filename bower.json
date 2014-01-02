@@ -1,0 +1,28 @@
+{
+  "name": "viewer",
+  "main": "viewer.js",
+  "version": "0.2.1",
+  "homepage": "http://viewerjs.org/",
+  "authors": [
+    "aurigadl <aurigadl@gmail.com>"
+  ],
+  "description": "Viewer.js is a combination of a number of excellent open source tools that are built on HTML and JavaScript. Viewer.js was funded by NLnet foundation",
+  "keywords": [
+    "pdf",
+    "odt",
+    "odp",
+    "viewer",
+    "webodf",
+    "KO",
+    "Gmbh",
+    "impressum"
+  ],
+  "license": "AGPL",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
