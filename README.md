@@ -1,3 +1,10 @@
+No server is required to run, but to open files from other directories is best if this folder viewer on a server.
+
+firefox index.html
+
+http://example.org/Viewer.js#../path/to/test.odt
+http://example.org/Viewer.js#../path/to/test.pdf
+
 # Viewer.JS
 
 Viewer.JS combines a number of excellent open source tools that are built on HTML and javascript. Viewer.JS was funded by [NLnet foundation](http://nlnet.nl) and developed by [KO GmbH](http://kogmbh.com).
