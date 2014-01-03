@@ -1,9 +1,17 @@
 No server is required to run, but to open files from other directories is best if this folder viewer on a server.
 
-firefox index.html
 
+``` js
+firefox index.html
+```
+
+``` js
 http://example.org/Viewer.js#../path/to/test.odt
+```
+
+``` js
 http://example.org/Viewer.js#../path/to/test.pdf
+```
 
 # Viewer.JS
 
