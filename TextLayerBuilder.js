@@ -171,6 +171,7 @@ var TextLayerBuilder = function textLayerBuilder(options) {
 
   this.appendText = function textLayerBuilderAppendText(geom) {
     var textDiv = document.createElement('div');
+    textDiv.dataset = textDiv.dataset | {};
 
     // vScale and hScale already contain the scaling to pixel units
     var fontHeight = geom.fontSize * Math.abs(geom.vScale);
