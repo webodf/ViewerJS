@@ -31,6 +31,7 @@ function ImageViewerPlugin() {
     img.onload = function () {
       self.setImage(img, viewerElement);
     };
+    // @todo Handle the error when unable to load the image.
     img.src = documentUrl;
   };
 
@@ -49,16 +50,15 @@ function ImageViewerPlugin() {
     domPage.appendChild(image_container);
     self.domPage = domPage;
     self.setZoomLevel(image_container.width / image.width);
-    self.onLoad();
-  }
+    self.onLoad(image_container.width / image.width);
+  };
 
 
   this.isSlideshow = function () {
     return false;
   };
 
-  this.onLoad = function (zoomlevel) {
-  };
+  this.onLoad = function (zoomlevel) {};
 
   this.getWidth = function () {
     return self.image_container.width;
@@ -81,23 +81,27 @@ function ImageViewerPlugin() {
 
   this.setZoomLevel = function (value) {
     self.zoom = value;
-    var width = self.original_width * value;
-    self.image_container.width = width;
-    if (width > self.domPage.clientWidth) {
+    self.image_container.width = self.original_width * value;
+    if (self.image_container.width > self.domPage.clientWidth) {
       self.triggerScrollBars(true);
     } else {
       self.triggerScrollBars(false);
     }
   };
 
+  // Sometimes happen the scrollbars get under the toolbars, we must
+  // find a way to prevent it, but playing with css in this way is not
+  // the best solution.
   this.triggerScrollBars = function (enable) {
+    /*
     if (true === enable) {
-      //document.getElementById('toolbarContainer').style.marginBottom = '10px';
-      //document.getElementById('toolbarContainer').style.width = (self.domPage.clientWidth - 20) + 'px';
+      document.getElementById('toolbarContainer').style.marginBottom = '10px';
+      document.getElementById('toolbarContainer').style.width = (self.domPage.clientWidth - 20) + 'px';
     } else {
-      //document.getElementById('toolbarContainer').style.marginBottom = '0';
-      //document.getElementById('toolbarContainer').style.width = (self.domPage.clientWidth) + 'px';
+      document.getElementById('toolbarContainer').style.marginBottom = '0';
+      document.getElementById('toolbarContainer').style.width = (self.domPage.clientWidth) + 'px';
     }
+    */
   };
 
 
