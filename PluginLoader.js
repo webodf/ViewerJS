@@ -38,54 +38,59 @@
 var viewer;
 
 function loadPlugin(pluginName, callback) {
-    "use strict";
-    var script, style;
+  "use strict";
+  var script, style;
 
-    // Load script
-    script = document.createElement('script');
-    script.async = false;
-    script.onload = callback;
-    script.src = pluginName + '.js';
-    script.type = 'text/javascript';
-    document.getElementsByTagName('head')[0].appendChild(script);
+  // Load script
+  script = document.createElement('script');
+  script.async = false;
+  script.onload = callback;
+  script.src = pluginName + '.js';
+  script.type = 'text/javascript';
+  document.getElementsByTagName('head')[0].appendChild(script);
 }
 
 function loadDocument(documentUrl) {
-    "use strict";
+  "use strict";
 
-    if (documentUrl) {
-        var extension = documentUrl.split('.').pop(),
-            Plugin;
-        extension = extension.toLowerCase();
-        
-        switch (extension) {
-        case 'odt':
-        case 'odp':
-        case 'ods':
-        case 'fodt':
-            loadPlugin('./ODFViewerPlugin', function () {
-                Plugin = ODFViewerPlugin;
-            });
-            break;
-        case 'pdf':
-            loadPlugin('./PDFViewerPlugin', function () {
-                Plugin = PDFViewerPlugin;
-            });
-            break;
-        case 'jpg':
-        case 'jpeg':
-        case 'png':
-        case 'gif':
-            loadPlugin('./ImageViewerPlugin', function () {
-                Plugin = ImageViewerPlugin;
-            });
-            break;
-        }
-
-        window.onload = function () {
-            if (Plugin) {
-                viewer = new Viewer(new Plugin());
-            }
-        };
+  if (documentUrl) {
+    var extension = documentUrl.split('.').pop(),
+      Plugin;
+    extension = extension.toLowerCase();
+    // Check if we have other parameters in the query string that can
+    // interfere with the extension calculation.
+    if(-1 != extension.indexOf('?')){
+      var ext = extension.split('?');
+      extension = ext[0];
     }
+    switch (extension) {
+      case 'odt':
+      case 'odp':
+      case 'ods':
+      case 'fodt':
+        loadPlugin('./ODFViewerPlugin', function () {
+          Plugin = ODFViewerPlugin;
+        });
+        break;
+      case 'pdf':
+        loadPlugin('./PDFViewerPlugin', function () {
+          Plugin = PDFViewerPlugin;
+        });
+        break;
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+      case 'gif':
+        loadPlugin('./ImageViewerPlugin', function () {
+          Plugin = ImageViewerPlugin;
+        });
+        break;
+    }
+
+    window.onload = function () {
+      if (Plugin) {
+        viewer = new Viewer(new Plugin());
+      }
+    };
+  }
 }
