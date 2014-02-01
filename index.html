@@ -3,12 +3,12 @@
   <!-- If you want to use custom CSS (@font-face rules, for example) you should uncomment
        the following reference and use a local.css file for that. See the example.local.css
        file for a sample.
+       But hey, wait! There is no example.local.css!
   <link rel="stylesheet" type="text/css" href="local.css" media="screen"/>
   -->
-  <link href='http://fonts.googleapis.com/css?family=Actor' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" type="text/css" href="viewer.css" media="screen"/>
 
-  <script src="viewer.js" type="text/javascript" charset="utf-8"></script>
+  <script src="Viewer.js" type="text/javascript" charset="utf-8"></script>
   <script src="PluginLoader.js" type="text/javascript" charset="utf-8"></script>
   <script>
     loadDocument(window.location.hash);
@@ -34,7 +34,7 @@
           <button id="next" class="toolbarButton pageDown" title="Next Page"></button>
         </div>
         <label id="pageNumberLabel" class="toolbarLabel" for="pageNumber">Page:</label>
-        <input type="number" id="pageNumber" class="toolbarField pageNumber"></input>
+        <input type="number" id="pageNumber" class="toolbarField pageNumber"/>
         <span id="numPages" class="toolbarLabel"></span>
       </div>
       <div id="toolbarMiddleContainer" class="outerCenter">
@@ -49,7 +49,7 @@
                                   <option id="pageAutoOption" value="auto" selected>Automatic</option>
                                   <option id="pageActualOption" value="page-actual">Actual Size</option>
                                   <option id="pageWidthOption" value="page-width">Full Width</option>
-                                  <option id="customScaleOption" value="0.1">1%</option>
+                                  <option value="0.15">15%</option>
                                   <option value="0.5">50%</option>
                                   <option value="0.75">75%</option>
                                   <option value="1">100%</option>
