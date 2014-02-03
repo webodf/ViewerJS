@@ -39,22 +39,24 @@
 function PDFViewerPlugin() {
     "use strict";
 
+    function loadScript(path, callback) {
+        var script = document.createElement('script');
+        script.async = false;
+        script.src = path;
+        script.type = 'text/javascript';
+        script.onload = callback || script.onload;
+        document.getElementsByTagName('head')[0].appendChild(script);
+    }
+
     function init(callback) {
         var pdfLib, textLayerLib, pluginCSS;
 
-        pdfLib = document.createElement('script');
-        pdfLib.async = false;
-        pdfLib.src = './pdf.js';
-        pdfLib.type = 'text/javascript';
-        pdfLib.onload = function () {
-            textLayerLib = document.createElement('script');
-            textLayerLib.async = false;
-            textLayerLib.src = './TextLayerBuilder.js';
-            textLayerLib.type = 'text/javascript';
-            textLayerLib.onload = callback;
-            document.getElementsByTagName('head')[0].appendChild(textLayerLib);
-        };
-        document.getElementsByTagName('head')[0].appendChild(pdfLib);
+        loadScript('./pdf.js', function () {
+            loadScript('./pdf_find_bar.js');
+            loadScript('./pdf_find_controller.js');
+            loadScript('./ui_utils.js');
+            loadScript('./text_layer_builder.js', callback);
+        });
 
         pluginCSS = document.createElement('link');
         pluginCSS.setAttribute("rel", "stylesheet");
@@ -145,7 +147,7 @@ function PDFViewerPlugin() {
                 canvasContext: canvas.getContext('2d'),
                 textLayer: textLayer,
                 viewport: page.getViewport(scale)
-            }).then(function () {
+            }).promise.then(function () {
                 setRenderingStatus(page, RENDERING.FINISHED);
             });
         }

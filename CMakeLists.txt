@@ -77,11 +77,16 @@ ExternalProject_Add(
 ExternalProject_Add(
     PDFjs
     GIT_REPOSITORY https://github.com/mozilla/pdf.js.git
-    GIT_TAG 0fc8bac7c0e27b9d164078c6c41e8e5eee138b33
+    GIT_TAG d45d7bc16128e3783ad29d16f3315add8f224265
     UPDATE_COMMAND ""
     CONFIGURE_COMMAND ""
     BUILD_COMMAND node <SOURCE_DIR>/make.js generic
-    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/build/generic/build/pdf.js ${CMAKE_BINARY_DIR}/viewer/pdf.js COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/build/generic/build/pdf.worker.js ${CMAKE_BINARY_DIR}/viewer/pdf.worker.js
+    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/build/generic/build/pdf.js ${CMAKE_BINARY_DIR}/viewer/pdf.js
+    COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/build/generic/build/pdf.worker.js ${CMAKE_BINARY_DIR}/viewer/pdf.worker.js
+    COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/web/pdf_find_bar.js ${CMAKE_BINARY_DIR}/viewer/pdf_find_bar.js
+    COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/web/pdf_find_controller.js ${CMAKE_BINARY_DIR}/viewer/pdf_find_controller.js
+    COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/web/ui_utils.js ${CMAKE_BINARY_DIR}/viewer/ui_utils.js
+    COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/web/text_layer_builder.js ${CMAKE_BINARY_DIR}/viewer/text_layer_builder.js
 )
 
 add_custom_command(
@@ -89,7 +94,6 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_BINARY_DIR}/viewer ${VIEWER_BUILD_DIR}
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/PluginLoader.js ${VIEWER_BUILD_DIR}/PluginLoader.js
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/PDFViewerPlugin.js ${VIEWER_BUILD_DIR}/PDFViewerPlugin.js
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/TextLayerBuilder.js ${VIEWER_BUILD_DIR}/TextLayerBuilder.js
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/PDFViewerPlugin.css ${VIEWER_BUILD_DIR}/PDFViewerPlugin.css
     COMMAND node ARGS ${WEBODF_SOURCE_DIR}/webodf/lib/runtime.js ${WEBODF_SOURCE_DIR}/webodf/tools/zipdir.js
     ${VIEWER_BUILD_DIR}
