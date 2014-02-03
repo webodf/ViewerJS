@@ -125,7 +125,8 @@ function PDFViewerPlugin() {
     function updatePageDimensions(page, width, height) {
         var domPage = getDomPage(page),
             canvas = domPage.getElementsByTagName('canvas')[0],
-            textLayer = domPage.getElementsByTagName('div')[0];
+            textLayer = domPage.getElementsByTagName('div')[0],
+            cssScale = 'scale(' + scale + ', ' + scale + ')';
 
         domPage.style.width = width;
         domPage.style.height = height;
@@ -135,6 +136,9 @@ function PDFViewerPlugin() {
 
         textLayer.style.width = width;
         textLayer.style.height = height;
+
+        CustomStyle.setProp('transform', textLayer, cssScale);
+        CustomStyle.setProp('transformOrigin', textLayer, '0% 0%');
 
         // Once the page dimension is updated, the rendering state is blank.
         setRenderingStatus(page, RENDERING.BLANK);
