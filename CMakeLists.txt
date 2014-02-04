@@ -66,8 +66,8 @@ SET ( WORDPRESSZIP ${WORDPRESS_ZIP_DIR}.zip)
 
 ExternalProject_Add(
     WebODF
-    GIT_REPOSITORY https://git.gitorious.org/webodf/webodf.git
-    GIT_TAG 317324cb1603632c400e43cb6cd68fe07f970a62
+    GIT_REPOSITORY https://github.com/kogmbh/WebODF.git
+    GIT_TAG d4f50bd320b8bc8dcb14ab315114fa208b664c67
     SOURCE_DIR ${WEBODF_SOURCE_DIR}
     UPDATE_COMMAND ""
     BUILD_COMMAND make viewerbuilddir-target
