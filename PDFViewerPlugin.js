@@ -55,7 +55,8 @@ function PDFViewerPlugin() {
             loadScript('./pdf_find_bar.js');
             loadScript('./pdf_find_controller.js');
             loadScript('./ui_utils.js');
-            loadScript('./text_layer_builder.js', callback);
+            loadScript('./text_layer_builder.js');
+            loadScript('./pdfjsversion.js', callback);
         });
 
         pluginCSS = document.createElement('link');
@@ -318,5 +319,21 @@ function PDFViewerPlugin() {
 
     this.showPage = function (n) {
         scrollIntoView(domPages[n - 1]);
+    };
+
+    this.getPluginName = function () {
+        return "PDF.js"
+    };
+
+    this.getPluginVersion = function () {
+        var version = (String(typeof pdfjs_version) !== "undefined"
+            ? pdfjs_version
+            : "From Source"
+        );
+        return version;
+    };
+
+    this.getPluginURL = function () {
+        return "https://github.com/mozilla/pdf.js/";
     };
 }

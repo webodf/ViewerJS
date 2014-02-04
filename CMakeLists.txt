@@ -74,10 +74,11 @@ ExternalProject_Add(
     INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/viewer/ ${CMAKE_BINARY_DIR}/viewer
 )
 
+set (PDFJS_VERSION d45d7bc)
 ExternalProject_Add(
     PDFjs
     GIT_REPOSITORY https://github.com/mozilla/pdf.js.git
-    GIT_TAG d45d7bc16128e3783ad29d16f3315add8f224265
+    GIT_TAG ${PDFJS_VERSION}
     UPDATE_COMMAND ""
     CONFIGURE_COMMAND ""
     BUILD_COMMAND node <SOURCE_DIR>/make.js generic
@@ -107,7 +108,7 @@ add_custom_target(Viewer ALL
     WebODF
     PDFjs
 )
-
+configure_file(pdfjsversion.js.in ${CMAKE_BINARY_DIR}/viewer/pdfjsversion.js)
 configure_file(viewerjs-plugin.php.in ${CMAKE_CURRENT_BINARY_DIR}/viewerjs-plugin.php)
 
 add_custom_command(
