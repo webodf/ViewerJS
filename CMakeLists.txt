@@ -35,8 +35,13 @@
 project (Viewer.js)
 cmake_minimum_required(VERSION 2.8.6)
 
-# At this point, the version number that is used throughout is defined
-set(VIEWERJS_VERSION 0.2.1)
+SET(OVERRULED_VIEWERJS_VERSION "" CACHE STRING "Viewer.JS Version to overrule")
+IF (OVERRULED_VIEWERJS_VERSION)
+    set (VIEWERJS_VERSION ${OVERRULED_VIEWERJS_VERSION})
+ELSE (OVERRULED_VIEWERJS_VERSION)
+    # At this point, the version number that is used throughout is defined
+    set(VIEWERJS_VERSION 0.2.1)
+ENDIF (OVERRULED_VIEWERJS_VERSION)
 
 if (CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
   message(FATAL_ERROR "Compiling in the source directory is not supported. Use for example 'mkdir build; cd build; cmake ..'.")
