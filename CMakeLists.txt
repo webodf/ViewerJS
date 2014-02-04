@@ -35,13 +35,19 @@
 project (Viewer.js)
 cmake_minimum_required(VERSION 2.8.6)
 
-# At this point, the version number that is used throughout is defined
-set(VIEWERJS_VERSION 0.2.1)
+SET(OVERRULED_VIEWERJS_VERSION "" CACHE STRING "Viewer.JS Version to overrule")
+IF (OVERRULED_VIEWERJS_VERSION)
+    set (VIEWERJS_VERSION ${OVERRULED_VIEWERJS_VERSION})
+ELSE (OVERRULED_VIEWERJS_VERSION)
+    # At this point, the version number that is used throughout is defined
+    set(VIEWERJS_VERSION 0.2.1)
+ENDIF (OVERRULED_VIEWERJS_VERSION)
 
 if (CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
   message(FATAL_ERROR "Compiling in the source directory is not supported. Use for example 'mkdir build; cd build; cmake ..'.")
 endif (CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
 
+MESSAGE ( STATUS "Building ViewerJS version: ${VIEWERJS_VERSION}" )
 # Tools must be obtained to work with:
 include (ExternalProject)
 
@@ -56,9 +62,9 @@ else ( IS_DIRECTORY $ENV{VIEWERJS_DOWNLOAD_DIR} )
 endif ( IS_DIRECTORY $ENV{VIEWERJS_DOWNLOAD_DIR} )
 MESSAGE ( STATUS "external downloads will be stored/expected in: ${EXTERNALS_DOWNLOAD_DIR}" )
 
-SET ( VIEWER_BUILD_DIR ${CMAKE_BINARY_DIR}/Viewer.js )
+SET ( VIEWER_BUILD_DIR ${CMAKE_BINARY_DIR}/ViewerJS-${VIEWERJS_VERSION} )
 FILE ( MAKE_DIRECTORY ${VIEWER_BUILD_DIR})
-SET ( VIEWERZIP ${CMAKE_BINARY_DIR}/Viewer.js-${VIEWERJS_VERSION}.zip)
+SET ( VIEWERZIP ${CMAKE_BINARY_DIR}/ViewerJS-${VIEWERJS_VERSION}.zip)
 SET ( WEBODF_SOURCE_DIR ${CMAKE_BINARY_DIR}/WebODF-source )
 
 SET ( WORDPRESS_ZIP_DIR ${CMAKE_CURRENT_BINARY_DIR}/viewerjs-wordpress-${VIEWERJS_VERSION})
@@ -66,8 +72,8 @@ SET ( WORDPRESSZIP ${WORDPRESS_ZIP_DIR}.zip)
 
 ExternalProject_Add(
     WebODF
-    GIT_REPOSITORY https://git.gitorious.org/webodf/webodf.git
-    GIT_TAG 317324cb1603632c400e43cb6cd68fe07f970a62
+    GIT_REPOSITORY https://github.com/kogmbh/WebODF.git
+    GIT_TAG dbedb6590dc5f84161ff30578f760b5557e789aa
     SOURCE_DIR ${WEBODF_SOURCE_DIR}
     UPDATE_COMMAND ""
     BUILD_COMMAND make viewerbuilddir-target
