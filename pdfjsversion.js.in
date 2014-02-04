@@ -1,0 +1,1 @@
+var /**@const{!string}*/pdfjs_version = "@PDFJS_VERSION@";
