@@ -72,7 +72,16 @@ function loadDocument(documentUrl) {
                 Plugin = PDFViewerPlugin;
             });
             break;
+        case 'jpg':
+        case 'jpeg':
+        case 'png':
+        case 'gif':
+            loadPlugin('./ImageViewerPlugin', function () {
+                Plugin = ImageViewerPlugin;
+            });
+            break;
         }
+        
 
         window.onload = function () {
             if (Plugin) {
