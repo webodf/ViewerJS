@@ -102,6 +102,10 @@ function ImageViewerPlugin() {
     }
     */
   };
+  
+  this.getPluginName = function () {
+    return "ImageViewerPlugin.js"
+  };
 
 
   this.getPages = function () {
