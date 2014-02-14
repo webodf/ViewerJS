@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright (C) 2013 KO GmbH <copyright@kogmbh.com>
+ * Copyright (C) 2013-2014 KO GmbH <copyright@kogmbh.com>
  *
  * @licstart
  * The JavaScript code in this page is free software: you can redistribute it
@@ -9,6 +9,9 @@
  * the License, or (at your option) any later version.  The code is distributed
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU AGPL for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this code.  If not, see <http://www.gnu.org/licenses/>.
  *
  * As additional permission under GNU AGPL version 3 section 7, you
  * may distribute non-source (e.g., minimized or compacted) forms of
