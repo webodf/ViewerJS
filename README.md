@@ -15,3 +15,11 @@ PDF.js is a library created by Andreas Gal and others at Mozilla Labs. It is an 
 ### Examples and more
 
 You can find additional information, some usage guides, and live examples at [the project homepage](http://viewerjs.org).
+
+### License
+
+Viewer.JS is a Free Software project. All code is available under the AGPL.
+
+If you are interested in using Viewer.JS in your commercial product
+(and do not want to disclose your sources / obey AGPL),
+contact [KO GmbH](http://kogmbh.com) for a commercial license.
