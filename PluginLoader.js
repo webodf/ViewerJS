@@ -33,7 +33,7 @@
  * This license applies to this entire compilation.
  * @licend
  * @source: http://viewerjs.org/
- * @source: http://github.com/thz/Viewer.js
+ * @source: http://github.com/kogmbh/Viewer.js
  */
 
 /*global document, window, Viewer, ODFViewerPlugin, PDFViewerPlugin*/
