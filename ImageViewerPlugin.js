@@ -34,6 +34,23 @@ function ImageViewerPlugin() {
     img.src = documentUrl;
   };
 
+  function loadScript(path, callback) {
+    var script = document.createElement('script');
+    script.async = false;
+    script.src = path;
+    script.type = 'text/javascript';
+    script.onload = callback || script.onload;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  function scrollIntoView(elem) {}
+
+  function isScrolledIntoView(elem) {}
+
+  function getDomPage(page) {}
+
+  function getPageText(page) {}
+
   this.setImage = function (image, container) {
     var domPage, image_container;
     domPage = document.createElement('div');
@@ -71,6 +88,7 @@ function ImageViewerPlugin() {
 
   this.fitToHeight = function (height) {};
 
+  this.fitToPage = function (width, height) {};
 
   this.fitSmart = function (width) {};
 
@@ -102,16 +120,31 @@ function ImageViewerPlugin() {
     }
     */
   };
-  
+
+  this.onScroll = function () {
+    // @todo Some kind of magnify tool would be great.
+    return true;
+  };
+
   this.getPluginName = function () {
     return "ImageViewerPlugin.js"
   };
 
+  this.getPluginVersion = function () {
+    return "From Source";
+  };
+
+  this.getPageInView = function () {
+    return 1;
+  };
 
   this.getPages = function () {
     return [];
   };
 
-  this.showPage = function (n) {
+  this.showPage = function (n) {};
+
+  this.getPluginURL = function () {
+    return "https://github.com/mozilla/pdf.js/";
   };
 }
