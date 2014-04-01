@@ -1,7 +1,7 @@
 .page {
     margin: 7px auto 7px auto;
     position: relative;
-    overflow: visible;
+    overflow: hidden;
     background-clip: content-box;
     background-color: white;
     
