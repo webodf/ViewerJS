@@ -90,6 +90,7 @@ ExternalProject_Add(
     BUILD_COMMAND node <SOURCE_DIR>/make.js generic
     INSTALL_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/build/generic/build/pdf.js ${CMAKE_BINARY_DIR}/viewer/pdf.js
     COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/build/generic/build/pdf.worker.js ${CMAKE_BINARY_DIR}/viewer/pdf.worker.js
+    COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/build/generic/web/compatibility.js ${CMAKE_BINARY_DIR}/viewer/compatibility.js
     COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/web/pdf_find_bar.js ${CMAKE_BINARY_DIR}/viewer/pdf_find_bar.js
     COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/web/pdf_find_controller.js ${CMAKE_BINARY_DIR}/viewer/pdf_find_controller.js
     COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/web/ui_utils.js ${CMAKE_BINARY_DIR}/viewer/ui_utils.js

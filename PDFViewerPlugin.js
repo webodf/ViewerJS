@@ -54,7 +54,8 @@ function PDFViewerPlugin() {
     function init(callback) {
         var pdfLib, textLayerLib, pluginCSS;
 
-        loadScript('./pdf.js', function () {
+        loadScript('./compatibility.js', function () {
+            loadScript('./pdf.js');
             loadScript('./pdf_find_bar.js');
             loadScript('./pdf_find_controller.js');
             loadScript('./ui_utils.js');
