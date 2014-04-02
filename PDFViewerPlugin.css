@@ -1,7 +1,7 @@
 .page {
     margin: 7px auto 7px auto;
     position: relative;
-    overflow: visible;
+    overflow: hidden;
     background-clip: content-box;
     background-color: white;
     
@@ -29,7 +29,6 @@
   line-height: 1;
   white-space: pre;
   cursor: text;
-  overflow: hidden;
 }
 
 ::selection { background:rgba(0,0,255,0.3); }
