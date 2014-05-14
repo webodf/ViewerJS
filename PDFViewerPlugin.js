@@ -33,7 +33,7 @@
  * This license applies to this entire compilation.
  * @licend
  * @source: http://viewerjs.org/
- * @source: http://github.com/kogmbh/Viewer.js
+ * @source: http://github.com/kogmbh/ViewerJS
  */
 
 /*global document, PDFJS, console, TextLayerBuilder*/
