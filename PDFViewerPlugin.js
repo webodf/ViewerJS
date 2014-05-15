@@ -208,6 +208,12 @@ function PDFViewerPlugin() {
 
         createdPageCount += 1;
         if (createdPageCount === (pdfDocument.numPages)) {
+            if (self.isSlideshow()) {
+                domPages.forEach(function (pageElement) {
+                    pageElement.style.display = "none";
+                });
+                self.showPage(1);
+            }
             self.onLoad();
         }
     }
@@ -318,15 +324,26 @@ function PDFViewerPlugin() {
 
     this.getPageInView = function () {
         var i;
-        for (i = 0; i < domPages.length; i += 1) {
-            if (isScrolledIntoView(domPages[i])) {
-                return i + 1;
+
+        if (self.isSlideshow()) {
+            return currentPage;
+        } else {
+            for (i = 0; i < domPages.length; i += 1) {
+                if (isScrolledIntoView(domPages[i])) {
+                    return i + 1;
+                }
             }
         }
     };
 
     this.showPage = function (n) {
-        scrollIntoView(domPages[n - 1]);
+        if (self.isSlideshow()) {
+            domPages[currentPage - 1].style.display = "none";
+            currentPage = n;
+            domPages[n - 1].style.display = "block";
+        } else {
+            scrollIntoView(domPages[n - 1]);
+        }
     };
 
     this.getPluginName = function () {
