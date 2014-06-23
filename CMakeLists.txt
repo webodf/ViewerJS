@@ -29,13 +29,13 @@
 # This license applies to this entire compilation.
 # @licend
 # @source: http://viewerjs.org/
-# @source: http://github.com/kogmbh/Viewer.js
+# @source: http://github.com/kogmbh/ViewerJS
 # 
 
-project (Viewer.js)
+project (ViewerJS)
 cmake_minimum_required(VERSION 2.8.6)
 
-SET(OVERRULED_VIEWERJS_VERSION "" CACHE STRING "Viewer.JS Version to overrule")
+SET(OVERRULED_VIEWERJS_VERSION "" CACHE STRING "ViewerJS Version to overrule")
 IF (OVERRULED_VIEWERJS_VERSION)
     set (VIEWERJS_VERSION ${OVERRULED_VIEWERJS_VERSION})
 ELSE (OVERRULED_VIEWERJS_VERSION)
