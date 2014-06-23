@@ -16,6 +16,24 @@ PDF.js is a library created by Andreas Gal and others at Mozilla Labs. It is an 
 
 You can find additional information, some usage guides, and live examples at [the project homepage](http://viewerjs.org).
 
+### Building
+
+ViewerJS uses [`cmake`](http://cmake.org/). Just follow these steps:
+
+```bash
+git clone git@github.com:kogmbh/ViewerJS.git
+mkdir build
+cd build
+cmake ../ViewerJS
+make
+```
+
+You will find the following two products in the build directory if everything goes well:
+- `viewerjs-{x.y.z}.zip`
+- `viewerjs-wordpress-{x.y.z}.zip`
+
+... where `{x.y.z}` denotes the version.
+
 ### License
 
 ViewerJS is a Free Software project. All code is available under the AGPL.
