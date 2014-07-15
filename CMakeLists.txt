@@ -70,10 +70,11 @@ SET ( WEBODF_SOURCE_DIR ${CMAKE_BINARY_DIR}/WebODF-source )
 SET ( WORDPRESS_ZIP_DIR ${CMAKE_CURRENT_BINARY_DIR}/viewerjs-wordpress-${VIEWERJS_VERSION})
 SET ( WORDPRESSZIP ${WORDPRESS_ZIP_DIR}.zip)
 
+set (WEBODF_VERSION v0.5.0)
 ExternalProject_Add(
     WebODF
     GIT_REPOSITORY https://github.com/kogmbh/WebODF.git
-    GIT_TAG d4f50bd320b8bc8dcb14ab315114fa208b664c67
+    GIT_TAG ${WEBODF_VERSION}
     SOURCE_DIR ${WEBODF_SOURCE_DIR}
     UPDATE_COMMAND ""
     BUILD_COMMAND make viewerbuilddir-target
