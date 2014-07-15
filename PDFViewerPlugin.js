@@ -129,14 +129,14 @@ function PDFViewerPlugin() {
             textLayer = domPage.getElementsByTagName('div')[0],
             cssScale = 'scale(' + scale + ', ' + scale + ')';
 
-        domPage.style.width = width;
-        domPage.style.height = height;
+        domPage.style.width = width + "px";
+        domPage.style.height = height + "px";
 
         canvas.width = width;
         canvas.height = height;
 
-        textLayer.style.width = width;
-        textLayer.style.height = height;
+        textLayer.style.width = width + "px";
+        textLayer.style.height = height + "px";
 
         CustomStyle.setProp('transform', textLayer, cssScale);
         CustomStyle.setProp('transformOrigin', textLayer, '0% 0%');
@@ -208,6 +208,12 @@ function PDFViewerPlugin() {
 
         createdPageCount += 1;
         if (createdPageCount === (pdfDocument.numPages)) {
+            if (self.isSlideshow()) {
+                domPages.forEach(function (pageElement) {
+                    pageElement.style.display = "none";
+                });
+                self.showPage(1);
+            }
             self.onLoad();
         }
     }
@@ -318,15 +324,26 @@ function PDFViewerPlugin() {
 
     this.getPageInView = function () {
         var i;
-        for (i = 0; i < domPages.length; i += 1) {
-            if (isScrolledIntoView(domPages[i])) {
-                return i + 1;
+
+        if (self.isSlideshow()) {
+            return currentPage;
+        } else {
+            for (i = 0; i < domPages.length; i += 1) {
+                if (isScrolledIntoView(domPages[i])) {
+                    return i + 1;
+                }
             }
         }
     };
 
     this.showPage = function (n) {
-        scrollIntoView(domPages[n - 1]);
+        if (self.isSlideshow()) {
+            domPages[currentPage - 1].style.display = "none";
+            currentPage = n;
+            domPages[n - 1].style.display = "block";
+        } else {
+            scrollIntoView(domPages[n - 1]);
+        }
     };
 
     this.getPluginName = function () {
