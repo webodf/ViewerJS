@@ -129,14 +129,14 @@ function PDFViewerPlugin() {
             textLayer = domPage.getElementsByTagName('div')[0],
             cssScale = 'scale(' + scale + ', ' + scale + ')';
 
-        domPage.style.width = width;
-        domPage.style.height = height;
+        domPage.style.width = width + "px";
+        domPage.style.height = height + "px";
 
         canvas.width = width;
         canvas.height = height;
 
-        textLayer.style.width = width;
-        textLayer.style.height = height;
+        textLayer.style.width = width + "px";
+        textLayer.style.height = height + "px";
 
         CustomStyle.setProp('transform', textLayer, cssScale);
         CustomStyle.setProp('transformOrigin', textLayer, '0% 0%');
