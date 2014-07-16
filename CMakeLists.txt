@@ -100,11 +100,10 @@ ExternalProject_Add(
 
 add_custom_command(
     OUTPUT ${VIEWERZIP}
-    COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_BINARY_DIR}/viewer ${VIEWER_BUILD_DIR}
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/PluginLoader.js ${VIEWER_BUILD_DIR}/PluginLoader.js
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/PDFViewerPlugin.js ${VIEWER_BUILD_DIR}/PDFViewerPlugin.js
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/PDFViewerPlugin.css ${VIEWER_BUILD_DIR}/PDFViewerPlugin.css
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/AGPL-3.0.txt ${VIEWER_BUILD_DIR}/AGPL-3.0.txt
+    COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_BINARY_DIR}/viewer ${VIEWER_BUILD_DIR}/ViewerJS
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/PluginLoader.js ${VIEWER_BUILD_DIR}/ViewerJS/PluginLoader.js
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/PDFViewerPlugin.js ${VIEWER_BUILD_DIR}/ViewerJS/PDFViewerPlugin.js
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/PDFViewerPlugin.css ${VIEWER_BUILD_DIR}/ViewerJS/PDFViewerPlugin.css
     COMMAND node ARGS ${WEBODF_SOURCE_DIR}/webodf/lib/runtime.js ${WEBODF_SOURCE_DIR}/webodf/tools/zipdir.js
     ${VIEWER_BUILD_DIR}
     ${VIEWERZIP}
