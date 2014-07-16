@@ -77,7 +77,7 @@ ExternalProject_Add(
     GIT_TAG ${WEBODF_VERSION}
     SOURCE_DIR ${WEBODF_SOURCE_DIR}
     UPDATE_COMMAND ""
-    BUILD_COMMAND make viewerbuilddir-target
+    BUILD_COMMAND make product-viewerjsdir
     INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/viewer/ ${CMAKE_BINARY_DIR}/viewer
 )
 
