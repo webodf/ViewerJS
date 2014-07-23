@@ -122,7 +122,7 @@ configure_file(viewerjs-plugin.php.in ${CMAKE_CURRENT_BINARY_DIR}/viewerjs-plugi
 add_custom_command(
     OUTPUT ${WORDPRESSZIP}
     COMMAND ${CMAKE_COMMAND} -E remove_directory ${WORDPRESS_ZIP_DIR}
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${VIEWER_BUILD_DIR} ${WORDPRESS_ZIP_DIR}
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${VIEWER_BUILD_DIR}/ViewerJS ${WORDPRESS_ZIP_DIR}
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/viewerjs-plugin-README.txt ${WORDPRESS_ZIP_DIR}
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/viewerjs-plugin.php ${WORDPRESS_ZIP_DIR}
     COMMAND node ARGS ${WEBODF_SOURCE_DIR}/webodf/lib/runtime.js ${WEBODF_SOURCE_DIR}/webodf/tools/zipdir.js
