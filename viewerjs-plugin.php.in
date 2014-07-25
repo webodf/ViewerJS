@@ -23,7 +23,7 @@ through which recipients can access the Corresponding Source.
 
 */
 
-$viewerjs_plugin_url = plugins_url() .'/'. plugin_basename(dirname(__FILE__));
+$viewerjs_plugin_url = plugins_url() .'/'. plugin_basename(dirname(__FILE__) .'/index.html');
 
 function ViewerJS_PluginAddPage() {
 	add_options_page('ViewerJS-Plugin Options', 'ViewerJS-Plugin', '8', 'viewerjs-plugin.php', 'ViewerJS_PluginOptions');
