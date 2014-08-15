@@ -88,10 +88,16 @@ add_action('admin_menu', 'ViewerJS_PluginAddPage');
 
 
 function viewerjs_mime_type_filter($mime_types) {
-    $mime_types['odt'] = 'application/vnd.oasis.opendocument.text';
-    $mime_types['odp'] = 'application/vnd.oasis.opendocument.presentation';
-    $mime_types['ods'] = 'application/vnd.oasis.opendocument.spreadsheet';
-    $mime_types['pdf'] = 'application/pdf';
+    $mime_types['odt'] =  'application/vnd.oasis.opendocument.text';
+    $mime_types['fodt'] = 'application/vnd.oasis.opendocument.text-flat-xml';
+    $mime_types['ott'] =  'application/vnd.oasis.opendocument.text-template';
+    $mime_types['odp'] =  'application/vnd.oasis.opendocument.presentation';
+    $mime_types['fodp'] = 'application/vnd.oasis.opendocument.presentation-flat-xml';
+    $mime_types['otp'] =  'application/vnd.oasis.opendocument.presentation-template';
+    $mime_types['ods'] =  'application/vnd.oasis.opendocument.spreadsheet';
+    $mime_types['fods'] = 'application/vnd.oasis.opendocument.spreadsheet-flat-xml';
+    $mime_types['ots'] =  'application/vnd.oasis.opendocument.spreadsheet-template';
+    $mime_types['pdf'] =  'application/pdf';
     return $mime_types;
 }
 add_filter( 'upload_mimes', 'viewerjs_mime_type_filter');
