@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright (C) 2013-2014 KO GmbH <copyright@kogmbh.com>
+ * Copyright (C) 2013-2015 KO GmbH <copyright@kogmbh.com>
  *
  * @licstart
  * The JavaScript code in this page is free software: you can redistribute it
@@ -79,7 +79,6 @@ function PDFViewerPlugin() {
             FINISHED: 2
         },
         container = null,
-        initialized = false,
         pdfDocument = null,
         pageViewScroll = null,
         isPresentationMode = false,
@@ -159,6 +158,15 @@ function PDFViewerPlugin() {
         }
     }
 
+    function completeLoading() {
+        domPages.forEach(function (domPage) {
+            container.appendChild(domPage);
+        });
+
+        self.showPage(1);
+        self.onLoad();
+    }
+
     function createPage(page) {
         var pageNumber,
             textLayerDiv,
@@ -174,6 +182,9 @@ function PDFViewerPlugin() {
         domPage = document.createElement('div');
         domPage.id = 'pageContainer' + pageNumber;
         domPage.className = 'page';
+        if (self.isSlideshow()) {
+            domPage.style.display = "none";
+        }
 
         canvas = document.createElement('canvas');
         canvas.id = 'canvas' + pageNumber;
@@ -182,13 +193,12 @@ function PDFViewerPlugin() {
         textLayerDiv.className = 'textLayer';
         textLayerDiv.id = 'textLayer' + pageNumber;
 
-        container.appendChild(domPage);
         domPage.appendChild(canvas);
         domPage.appendChild(textLayerDiv);
 
-        pages.push(page);
-        domPages.push(domPage);
-        renderingStates.push(RENDERING.BLANK);
+        pages[page.pageIndex] = page;
+        domPages[page.pageIndex] = domPage;
+        renderingStates[page.pageIndex] = RENDERING.BLANK;
 
         updatePageDimensions(page, viewport.width, viewport.height);
         pageWidth = viewport.width;
@@ -202,17 +212,11 @@ function PDFViewerPlugin() {
         page.getTextContent().then(function (textContent) {
             textLayer.setTextContent(textContent);
         });
-        pageText.push(textLayer);
+        pageText[page.pageIndex] = textLayer;
 
         createdPageCount += 1;
         if (createdPageCount === (pdfDocument.numPages)) {
-            if (self.isSlideshow()) {
-                domPages.forEach(function (pageElement) {
-                    pageElement.style.display = "none";
-                });
-                self.showPage(1);
-            }
-            self.onLoad();
+            completeLoading();
         }
     }
 
@@ -220,6 +224,7 @@ function PDFViewerPlugin() {
         var self = this,
             i,
             pluginCSS;
+
 
         init(function () {
             PDFJS.workerSrc = "./pdf.worker.js";
@@ -230,8 +235,6 @@ function PDFViewerPlugin() {
                 for (i = 0; i < pdfDocument.numPages; i += 1) {
                     pdfDocument.getPage(i + 1).then(createPage);
                 }
-
-                initialized = true;
             });
         });
     };
