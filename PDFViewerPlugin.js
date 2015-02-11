@@ -56,8 +56,6 @@ function PDFViewerPlugin() {
 
         loadScript('./compatibility.js', function () {
             loadScript('./pdf.js');
-            loadScript('./pdf_find_bar.js');
-            loadScript('./pdf_find_controller.js');
             loadScript('./ui_utils.js');
             loadScript('./text_layer_builder.js');
             loadScript('./pdfjsversion.js', callback);
@@ -111,16 +109,16 @@ function PDFViewerPlugin() {
     }
 
     function getDomPage(page) {
-        return domPages[page.pageInfo.pageIndex];
+        return domPages[page.pageIndex];
     }
     function getPageText(page) {
-        return pageText[page.pageInfo.pageIndex];
+        return pageText[page.pageIndex];
     }
     function getRenderingStatus(page) {
-        return renderingStates[page.pageInfo.pageIndex];
+        return renderingStates[page.pageIndex];
     }
     function setRenderingStatus(page, renderStatus) {
-        renderingStates[page.pageInfo.pageIndex] = renderStatus;
+        renderingStates[page.pageIndex] = renderStatus;
     }
 
     function updatePageDimensions(page, width, height) {
@@ -170,7 +168,7 @@ function PDFViewerPlugin() {
             domPage,
             viewport;
 
-        pageNumber = page.pageInfo.pageIndex + 1;
+        pageNumber = page.pageIndex + 1;
 
         viewport = page.getViewport(scale);
 
@@ -199,6 +197,7 @@ function PDFViewerPlugin() {
 
         textLayer = new TextLayerBuilder({
             textLayerDiv: textLayerDiv,
+            viewport: viewport,
             pageIndex: pageNumber - 1
         });
         page.getTextContent().then(function (textContent) {

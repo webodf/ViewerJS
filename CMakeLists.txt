@@ -81,19 +81,18 @@ ExternalProject_Add(
     INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/viewer/ ${CMAKE_BINARY_DIR}/viewer
 )
 
-set (PDFJS_VERSION d45d7bc)
+set (PDFJS_VERSION v1.0.907)
 ExternalProject_Add(
     PDFjs
     GIT_REPOSITORY https://github.com/mozilla/pdf.js.git
     GIT_TAG ${PDFJS_VERSION}
     UPDATE_COMMAND ""
     CONFIGURE_COMMAND ""
-    BUILD_COMMAND node <SOURCE_DIR>/make.js generic
-    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/build/generic/build/pdf.js ${CMAKE_BINARY_DIR}/viewer/pdf.js
-    COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/build/generic/build/pdf.worker.js ${CMAKE_BINARY_DIR}/viewer/pdf.worker.js
-    COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/build/generic/web/compatibility.js ${CMAKE_BINARY_DIR}/viewer/compatibility.js
-    COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/web/pdf_find_bar.js ${CMAKE_BINARY_DIR}/viewer/pdf_find_bar.js
-    COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/web/pdf_find_controller.js ${CMAKE_BINARY_DIR}/viewer/pdf_find_controller.js
+    BUILD_IN_SOURCE "1"
+    BUILD_COMMAND node make generic
+    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/build/pdf.js ${CMAKE_BINARY_DIR}/viewer/pdf.js
+    COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/build/pdf.worker.js ${CMAKE_BINARY_DIR}/viewer/pdf.worker.js
+    COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/web/compatibility.js ${CMAKE_BINARY_DIR}/viewer/compatibility.js
     COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/web/ui_utils.js ${CMAKE_BINARY_DIR}/viewer/ui_utils.js
     COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/web/text_layer_builder.js ${CMAKE_BINARY_DIR}/viewer/text_layer_builder.js
 )
