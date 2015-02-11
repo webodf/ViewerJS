@@ -52,7 +52,7 @@ function PDFViewerPlugin() {
     }
 
     function init(callback) {
-        var pdfLib, textLayerLib, pluginCSS;
+        var pluginCSS;
 
         loadScript('./compatibility.js', function () {
             loadScript('./pdf.js');
@@ -78,7 +78,6 @@ function PDFViewerPlugin() {
             RUNNING: 1,
             FINISHED: 2
         },
-        startedTextExtraction = false,
         container = null,
         initialized = false,
         pdfDocument = null,
