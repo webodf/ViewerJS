@@ -70,7 +70,7 @@ SET ( WEBODF_SOURCE_DIR ${CMAKE_BINARY_DIR}/WebODF-source )
 SET ( WORDPRESS_ZIP_DIR ${CMAKE_CURRENT_BINARY_DIR}/viewerjs-wordpress-${VIEWERJS_VERSION})
 SET ( WORDPRESSZIP ${WORDPRESS_ZIP_DIR}.zip)
 
-set (WEBODF_VERSION v0.5.4)
+set (WEBODF_VERSION v0.5.5)
 ExternalProject_Add(
     WebODF
     GIT_REPOSITORY https://github.com/kogmbh/WebODF.git
