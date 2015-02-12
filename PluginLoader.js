@@ -53,39 +53,56 @@ function loadPlugin(pluginName, callback) {
     document.getElementsByTagName('head')[0].appendChild(script);
 }
 
+function createXMLHttpRequest(){
+    var xmlhttp;
+
+    if (window.XMLHttpRequest) {
+        // code for IE7+, Firefox, Chrome, Opera,Safari
+        xmlhttp = new XMLHttpRequest();
+    } else {
+        // code for IE6, IE5
+        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+   
+    return xmlhttp;
+}
+
 function loadDocument(documentUrl) {
     "use strict";
 
     if (documentUrl) {
-        var extension = documentUrl.split('.').pop(),
-            Plugin;
-        extension = extension.toLowerCase();
+        var xmlhttp = createXMLHttpRequest();
 
-        switch (extension) {
-        case 'odt':
-        case 'fodt':
-        case 'ott':
-        case 'odp':
-        case 'fodp':
-        case 'otp':
-        case 'ods':
-        case 'fods':
-        case 'ots':
-            loadPlugin('./ODFViewerPlugin', function () {
-                Plugin = ODFViewerPlugin;
-            });
-            break;
-        case 'pdf':
-            loadPlugin('./PDFViewerPlugin', function () {
-                Plugin = PDFViewerPlugin;
-            });
-            break;
-        }
+        xmlhttp.onreadystatechange = function() {
+            //readystate === 2 --> Headers received!
+            if (xmlhttp.readyState === 2) {
+                var extension = this.getResponseHeader('content-type');
+ 
+                var Plugin;
+ 
+                switch (extension) {
+                case 'application/vnd.oasis.opendocument.text':
+                case 'application/vnd.oasis.opendocument.presentation':
+                case 'application/vnd.oasis.opendocument.spreadsheet':
+                    loadPlugin('./ODFViewerPlugin', function() {
+                        Plugin = ODFViewerPlugin;
+                        viewer = new Viewer(new Plugin());
+                    });
+                    break;
+                case 'application/pdf':
+                    loadPlugin('./PDFViewerPlugin', function() {
+                        Plugin = PDFViewerPlugin;
+                        viewer = new Viewer(new Plugin());
+                    });
+                    break;
+                }
 
-        window.onload = function () {
-            if (Plugin) {
-                viewer = new Viewer(new Plugin());
-            }
-        };
-    }
+                //Abort the download of the document, in this phase we only need the content-type
+                this.abort();
+           }
+       };
+       
+       xmlhttp.open("GET", documentUrl.substring(1), true);
+       xmlhttp.send();
+   }
 }
