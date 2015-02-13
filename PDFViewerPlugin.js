@@ -76,7 +76,8 @@ function PDFViewerPlugin() {
         RENDERING = {
             BLANK: 0,
             RUNNING: 1,
-            FINISHED: 2
+            FINISHED: 2,
+            RUNNINGOUTDATED: 3
         },
         container = null,
         pdfDocument = null,
@@ -93,6 +94,10 @@ function PDFViewerPlugin() {
     }
 
     function isScrolledIntoView(elem) {
+        if (elem.style.display === "none") {
+            return false;
+        }
+
         var docViewTop = container.scrollTop,
             docViewBottom = docViewTop + container.clientHeight,
             elemTop = elem.offsetTop,
@@ -137,23 +142,37 @@ function PDFViewerPlugin() {
         CustomStyle.setProp('transform', textLayer, cssScale);
         CustomStyle.setProp('transformOrigin', textLayer, '0% 0%');
 
-        // Once the page dimension is updated, the rendering state is blank.
-        setRenderingStatus(page, RENDERING.BLANK);
+        if (getRenderingStatus(page) === RENDERING.RUNNING) {
+            // TODO: should be able to cancel that rendering
+            setRenderingStatus(page, RENDERING.RUNNINGOUTDATED);
+        } else {
+            // Once the page dimension is updated, the rendering state is blank.
+            setRenderingStatus(page, RENDERING.BLANK);
+        }
     }
 
-    function renderPage(page) {
-        var domPage = getDomPage(page),
-            textLayer = getPageText(page),
-            canvas = domPage.getElementsByTagName('canvas')[0];
+    function ensurePageRendered(page) {
+        var domPage, textLayer, canvas;
 
         if (getRenderingStatus(page) === RENDERING.BLANK) {
             setRenderingStatus(page, RENDERING.RUNNING);
+
+            domPage = getDomPage(page);
+            textLayer = getPageText(page);
+            canvas = domPage.getElementsByTagName('canvas')[0];
+
             page.render({
                 canvasContext: canvas.getContext('2d'),
                 textLayer: textLayer,
                 viewport: page.getViewport(scale)
             }).promise.then(function () {
-                setRenderingStatus(page, RENDERING.FINISHED);
+                if (getRenderingStatus(page) === RENDERING.RUNNINGOUTDATED) {
+                    // restart
+                    setRenderingStatus(page, RENDERING.BLANK);
+                    ensurePageRendered(page);
+                } else {
+                    setRenderingStatus(page, RENDERING.FINISHED);
+                }
             });
         }
     }
@@ -316,9 +335,7 @@ function PDFViewerPlugin() {
 
         for (i = 0; i < domPages.length; i += 1) {
             if (isScrolledIntoView(domPages[i])) {
-                if (getRenderingStatus(pages[i]) === RENDERING.BLANK) {
-                    renderPage(pages[i]);
-                }
+                ensurePageRendered(pages[i]);
             }
         }
     };
@@ -341,6 +358,7 @@ function PDFViewerPlugin() {
         if (self.isSlideshow()) {
             domPages[currentPage - 1].style.display = "none";
             currentPage = n;
+            ensurePageRendered(pages[n - 1]);
             domPages[n - 1].style.display = "block";
         } else {
             scrollIntoView(domPages[n - 1]);
