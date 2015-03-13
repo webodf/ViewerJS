@@ -81,7 +81,7 @@ ExternalProject_Add(
     INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/viewer/ ${CMAKE_BINARY_DIR}/viewer
 )
 
-set (PDFJS_VERSION v1.0.907)
+set (PDFJS_VERSION v1.0.1040)
 ExternalProject_Add(
     PDFjs
     GIT_REPOSITORY https://github.com/mozilla/pdf.js.git
