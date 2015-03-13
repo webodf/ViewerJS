@@ -82,11 +82,12 @@ function PDFViewerPlugin() {
         container = null,
         pdfDocument = null,
         pageViewScroll = null,
+        isGuessedSlideshow = true, // assume true as default, any non-matching page will unset this
         isPresentationMode = false,
         scale = 1,
         currentPage = 1,
-        pageWidth,
-        pageHeight,
+        maxPageWidth = 0,
+        maxPageHeight = 0,
         createdPageCount = 0;
 
     function scrollIntoView(elem) {
@@ -178,7 +179,11 @@ function PDFViewerPlugin() {
     }
 
     function completeLoading() {
+        var allPagesVisible = !self.isSlideshow();
         domPages.forEach(function (domPage) {
+            if (allPagesVisible) {
+                domPage.style.display = "block";
+            }
             container.appendChild(domPage);
         });
 
@@ -201,9 +206,7 @@ function PDFViewerPlugin() {
         domPage = document.createElement('div');
         domPage.id = 'pageContainer' + pageNumber;
         domPage.className = 'page';
-        if (self.isSlideshow()) {
-            domPage.style.display = "none";
-        }
+        domPage.style.display = "none";
 
         canvas = document.createElement('canvas');
         canvas.id = 'canvas' + pageNumber;
@@ -220,8 +223,16 @@ function PDFViewerPlugin() {
         renderingStates[page.pageIndex] = RENDERING.BLANK;
 
         updatePageDimensions(page, viewport.width, viewport.height);
-        pageWidth = viewport.width;
-        pageHeight = viewport.height;
+        if (maxPageWidth < viewport.width) {
+            maxPageWidth = viewport.width;
+        }
+        if (maxPageHeight < viewport.height) {
+            maxPageHeight = viewport.height;
+        }
+        // A very simple but generally true guess - if any page has the height greater than the width, treat it no longer as a slideshow
+        if (viewport.width < viewport.height) {
+            isGuessedSlideshow = false;
+        }
 
         textLayer = new TextLayerBuilder({
             textLayerDiv: textLayerDiv,
@@ -259,8 +270,7 @@ function PDFViewerPlugin() {
     };
 
     this.isSlideshow = function () {
-        // A very simple but generally true guess - if the width is greater than the height, treat it as a slideshow
-        return pageWidth > pageHeight;
+        return isGuessedSlideshow;
     };
 
     this.onLoad = function () {};
@@ -272,48 +282,49 @@ function PDFViewerPlugin() {
     this.fitToWidth = function (width) {
         var zoomLevel;
 
-        if (pageWidth === width) {
+        if (maxPageWidth === width) {
             return;
         }
-        zoomLevel = width / pageWidth;
+        zoomLevel = width / maxPageWidth;
         self.setZoomLevel(zoomLevel);
     };
 
     this.fitToHeight = function (height) {
         var zoomLevel;
 
-        if (pageHeight === height) {
+        if (maxPageHeight === height) {
             return;
         }
-        zoomLevel = height / pageHeight;
+        zoomLevel = height / maxPageHeight;
         self.setZoomLevel(zoomLevel);
     };
 
     this.fitToPage = function (width, height) {
-        var zoomLevel = width / pageWidth;
-        if (height / pageHeight < zoomLevel) {
-            zoomLevel = height / pageHeight;
+        var zoomLevel = width / maxPageWidth;
+        if (height / maxPageHeight < zoomLevel) {
+            zoomLevel = height / maxPageHeight;
         }
         self.setZoomLevel(zoomLevel);
     };
 
     this.fitSmart = function (width, height) {
-        var zoomLevel = width / pageWidth;
-        if (height && (height / pageHeight) < zoomLevel) {
-            zoomLevel = height / pageHeight;
+        var zoomLevel = width / maxPageWidth;
+        if (height && (height / maxPageHeight) < zoomLevel) {
+            zoomLevel = height / maxPageHeight;
         }
         zoomLevel = Math.min(1.0, zoomLevel);
         self.setZoomLevel(zoomLevel);
     };
 
     this.setZoomLevel = function (zoomLevel) {
-        var i;
+        var i, viewport;
 
         if (scale !== zoomLevel) {
             scale = zoomLevel;
 
             for (i = 0; i < pages.length; i += 1) {
-                updatePageDimensions(pages[i], pageWidth * scale, pageHeight * scale);
+                viewport = pages[i].getViewport(scale);
+                updatePageDimensions(pages[i], viewport.width, viewport.height);
             }
         }
     };
