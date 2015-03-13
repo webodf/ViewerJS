@@ -269,18 +269,10 @@ function PDFViewerPlugin() {
         return domPages;
     };
 
-    this.getWidth = function () {
-        return pageWidth;
-    };
-
-    this.getHeight = function () {
-        return pageHeight;
-    };
-
     this.fitToWidth = function (width) {
         var zoomLevel;
 
-        if (self.getWidth() === width) {
+        if (pageWidth === width) {
             return;
         }
         zoomLevel = width / pageWidth;
@@ -290,7 +282,7 @@ function PDFViewerPlugin() {
     this.fitToHeight = function (height) {
         var zoomLevel;
 
-        if (self.getHeight() === height) {
+        if (pageHeight === height) {
             return;
         }
         zoomLevel = height / pageHeight;
