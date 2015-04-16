@@ -127,29 +127,34 @@ select {
 html[dir='ltr'] #toolbarLeft {
     margin-left: -1px;
 }
-html[dir='rtl'] #toolbarRight {
+html[dir='rtl'] #toolbarRight,
+html[dir='rtl'] #titlebarRight {
     margin-left: -1px;
 }
 html[dir='ltr'] #toolbarLeft,
-html[dir='rtl'] #toolbarRight {
+html[dir='rtl'] #toolbarRight,
+html[dir='rtl'] #titlebarRight {
     position: absolute;
     top: 0;
     left: 0;
 }
+html[dir='rtl'] #toolbarLeft,
 html[dir='ltr'] #toolbarRight,
-html[dir='rtl'] #toolbarLeft {
+html[dir='ltr'] #titlebarRight {
     position: absolute;
     top: 0;
     right: 0;
 }
 html[dir='ltr'] #toolbarLeft > *,
 html[dir='ltr'] #toolbarMiddle > *,
-html[dir='ltr'] #toolbarRight > * {
+html[dir='ltr'] #toolbarRight > *,
+html[dir='ltr'] #titlebarRight > * {
     float: left;
 }
 html[dir='rtl'] #toolbarLeft > *,
 html[dir='rtl'] #toolbarMiddle > *,
-html[dir='rtl'] #toolbarRight > * {
+html[dir='rtl'] #toolbarRight > *,
+html[dir='rtl'] #titlebarRight > * {
     float: right;
 }
 
