@@ -1,0 +1,66 @@
+/**
+ * Copyright (C) 2012-2015 KO GmbH <copyright@kogmbh.com>
+ *
+ * @licstart
+ * This file is part of ViewerJS.
+ *
+ * ViewerJS is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License (GNU AGPL)
+ * as published by the Free Software Foundation, either version 3 of
+ * the License, or (at your option) any later version.
+ *
+ * ViewerJS is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with ViewerJS.  If not, see <http://www.gnu.org/licenses/>.
+ * @licend
+ *
+ * @source: http://viewerjs.org/
+ * @source: http://github.com/kogmbh/ViewerJS
+ */
+
+#canvasContainer {
+    top: 0;
+    bottom: 0;
+}
+
+#overlayNavigator {
+    height: 100px;
+    pointer-events: none;
+}
+#nextPage, #previousPage {
+    pointer-events: all;
+}
+
+#titlebar, #toolbarContainer {
+    background-color: rgba(0, 0, 0, 0.6);
+    background-image: none;
+    -webkit-transition: all 0.5s;
+    -moz-transition: all 0.5s;
+    transition: all 0.5s;
+}
+
+#titlebar {
+    top: -32px;
+}
+#titlebar.viewer-touched {
+    top: 0px;
+}
+#toolbarContainer {
+    bottom: -32px;
+}
+#toolbarContainer.viewer-touched {
+    bottom: 0px;
+}
+
+.viewer-touched {
+    display: block;
+    opacity: 1 !important;
+}
+
+#next, #previous {
+    display: none;
+}

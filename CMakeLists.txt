@@ -90,19 +90,21 @@ set( PDFJS_SOURCE_DIR ${CMAKE_BINARY_DIR}/PDFJS-source )
 
 set( WEBODF_SOURCE_DIR ${CMAKE_BINARY_DIR}/WebODF-source )
 set( WEBODF_BUILD_DIR ${CMAKE_BINARY_DIR}/WebODF-build )
+set( TOOLS_DIR ${WEBODF_SOURCE_DIR}/webodf/tools )
+set( RUNTIMEJS ${WEBODF_SOURCE_DIR}/webodf/lib/runtime.js )
 
 set( WORDPRESS_ZIP_DIR ${CMAKE_CURRENT_BINARY_DIR}/viewerjs-wordpress-${VIEWERJS_VERSION})
 set( WORDPRESSZIPNAME viewerjs-wordpress-${VIEWERJS_VERSION}.zip)
 set( WORDPRESSZIP ${CMAKE_BINARY_DIR}/${WORDPRESSZIPNAME})
 
-# HEADERCOMPILED_FILE defines the file to use as header for the compiled ViewerJS files.
-# Per default that is HeaderCompiled.js
-# For release builds it can be overwritten by passing -DHEADERCOMPILED_FILE=/path/to/file
+# HTMLHEADERCOMPILED_FILE defines the file to use as header for the compiled ViewerJS HTML files.
+# Per default that is HeaderCompiled.html
+# For release builds it can be overwritten by passing -DHTMLHEADERCOMPILED_FILE=/path/to/file
 # to cmake.
-if(NOT HEADERCOMPILED_FILE)
-  set(HEADERCOMPILED_FILE "${CMAKE_SOURCE_DIR}/HeaderCompiled.js")
-elseif(NOT IS_ABSOLUTE ${HEADERCOMPILED_FILE})
-  set(HEADERCOMPILED_FILE ${CMAKE_BINARY_DIR}/${HEADERCOMPILED_FILE})
+if(NOT HTMLHEADERCOMPILED_FILE)
+  set(HTMLHEADERCOMPILED_FILE "${CMAKE_SOURCE_DIR}/HeaderCompiled.html")
+elseif(NOT IS_ABSOLUTE ${HTMLHEADERCOMPILED_FILE})
+  set(HTMLHEADERCOMPILED_FILE ${CMAKE_BINARY_DIR}/${HTMLHEADERCOMPILED_FILE})
 endif()
 
 
@@ -155,56 +157,98 @@ configure_file(pdfjsversion.js.in ${CMAKE_BINARY_DIR}/pdfjsversion.js)
 configure_file(viewerjs-plugin.php.in ${CMAKE_CURRENT_BINARY_DIR}/viewerjs-plugin.php)
 
 add_custom_command(
+    OUTPUT viewer.css.js
+    COMMAND node ${RUNTIMEJS} ${TOOLS_DIR}/css2js.js
+        viewer.css ${CMAKE_CURRENT_BINARY_DIR}/viewer.css.js
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    DEPENDS
+        WebODF
+        ${TOOLS_DIR}/css2js.js
+        viewer.css
+)
+add_custom_target(viewer.css.js-target DEPENDS viewer.css.js)
+
+add_custom_command(
+    OUTPUT viewerTouch.css.js
+    COMMAND node ${RUNTIMEJS} ${TOOLS_DIR}/css2js.js
+        viewerTouch.css ${CMAKE_CURRENT_BINARY_DIR}/viewerTouch.css.js
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    DEPENDS
+        WebODF
+        ${TOOLS_DIR}/css2js.js
+        viewer.css
+)
+add_custom_target(viewerTouch.css.js-target DEPENDS viewerTouch.css.js)
+
+add_custom_command(
+    OUTPUT ODFViewerPlugin.css.js
+    COMMAND node ${RUNTIMEJS} ${TOOLS_DIR}/css2js.js
+        ODFViewerPlugin.css ${CMAKE_CURRENT_BINARY_DIR}/ODFViewerPlugin.css.js
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    DEPENDS
+        WebODF
+        ${TOOLS_DIR}/css2js.js
+        ODFViewerPlugin.css
+)
+add_custom_target(ODFViewerPlugin.css.js-target DEPENDS ODFViewerPlugin.css.js)
+
+add_custom_command(
+    OUTPUT PDFViewerPlugin.css.js
+    COMMAND node ${RUNTIMEJS} ${TOOLS_DIR}/css2js.js
+        PDFViewerPlugin.css ${CMAKE_CURRENT_BINARY_DIR}/PDFViewerPlugin.css.js
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    DEPENDS
+        WebODF
+        ${TOOLS_DIR}/css2js.js
+        PDFViewerPlugin.css
+)
+add_custom_target(PDFViewerPlugin.css.js-target DEPENDS PDFViewerPlugin.css.js)
+
+add_custom_command(
     OUTPUT viewer.min.js
     COMMENT "Creating viewer.min.js"
     COMMAND ${Java_JAVA_EXECUTABLE}
         -jar ${CLOSURE_JAR}
-        --js ${HEADERCOMPILED_FILE}
+        --js ${CMAKE_CURRENT_BINARY_DIR}/ODFViewerPlugin.css.js
+        --js ${CMAKE_CURRENT_SOURCE_DIR}/ODFViewerPlugin.js
+        --js ${CMAKE_CURRENT_BINARY_DIR}/PDFViewerPlugin.css.js
+        --js ${CMAKE_CURRENT_SOURCE_DIR}/PDFViewerPlugin.js
         --js ${CMAKE_CURRENT_BINARY_DIR}/viewerjsversion.js
+        --js ${CMAKE_CURRENT_BINARY_DIR}/viewer.css.js
+        --js ${CMAKE_CURRENT_BINARY_DIR}/viewerTouch.css.js
         --js ${CMAKE_CURRENT_SOURCE_DIR}/viewer.js
         --js ${CMAKE_CURRENT_SOURCE_DIR}/PluginLoader.js
         --compilation_level SIMPLE_OPTIMIZATIONS
         --js_output_file ${CMAKE_CURRENT_BINARY_DIR}/viewer.min.js
     DEPENDS
         ClosureCompiler
-        ${HEADERCOMPILED_FILE}
+        ODFViewerPlugin.css.js-target
+        ODFViewerPlugin.js
+        PDFViewerPlugin.css.js-target
+        PDFViewerPlugin.js
         ${CMAKE_CURRENT_BINARY_DIR}/viewerjsversion.js
+        viewer.css.js-target
+        viewerTouch.css.js-target
         viewer.js
         PluginLoader.js
     )
 add_custom_target(viewer.min.js-target DEPENDS viewer.min.js)
 
 add_custom_command(
-    OUTPUT ODFViewerPlugin.min.js
-    COMMENT "Creating ODFViewerPlugin.min.js"
-    COMMAND ${Java_JAVA_EXECUTABLE}
-        -jar ${CLOSURE_JAR}
-        --js ${HEADERCOMPILED_FILE}
-        --js ${CMAKE_CURRENT_SOURCE_DIR}/ODFViewerPlugin.js
-        --compilation_level SIMPLE_OPTIMIZATIONS
-        --js_output_file ${CMAKE_CURRENT_BINARY_DIR}/ODFViewerPlugin.min.js
+    OUTPUT index.html
+    COMMAND node ${RUNTIMEJS} ${CMAKE_SOURCE_DIR}/tools/replaceByFileContents.js
+        ${CMAKE_CURRENT_SOURCE_DIR}/index-template.html
+        ${CMAKE_CURRENT_BINARY_DIR}/index.html
+        @VIEWERJSLICENSE_START@ @VIEWERJSLICENSE_END@ ${HTMLHEADERCOMPILED_FILE}
+        @VIEWERJS_START@ @VIEWERJS_END@ ${CMAKE_CURRENT_BINARY_DIR}/viewer.min.js
     DEPENDS
-        ClosureCompiler
-        ${HEADERCOMPILED_FILE}
-        ODFViewerPlugin.js
-    )
-add_custom_target(ODFViewerPlugin.min.js-target DEPENDS ODFViewerPlugin.min.js)
-
-add_custom_command(
-    OUTPUT PDFViewerPlugin.min.js
-    COMMENT "Creating PDFViewerPlugin.min.js"
-    COMMAND ${Java_JAVA_EXECUTABLE}
-        -jar ${CLOSURE_JAR}
-        --js ${HEADERCOMPILED_FILE}
-        --js ${CMAKE_CURRENT_SOURCE_DIR}/PDFViewerPlugin.js
-        --compilation_level SIMPLE_OPTIMIZATIONS
-        --js_output_file ${CMAKE_CURRENT_BINARY_DIR}/PDFViewerPlugin.min.js
-    DEPENDS
-        ClosureCompiler
-        ${HEADERCOMPILED_FILE}
-        PDFViewerPlugin.js
-    )
-add_custom_target(PDFViewerPlugin.min.js-target DEPENDS PDFViewerPlugin.min.js)
+        WebODF
+        ${CMAKE_SOURCE_DIR}/tools/replaceByFileContents.js
+        ${HTMLHEADERCOMPILED_FILE}
+        viewer.min.js-target
+        index-template.html
+)
+add_custom_target(index.html-target DEPENDS index.html)
 
 add_custom_command(
     OUTPUT ${VIEWER_BUILD_DIR}/ViewerJS
@@ -213,15 +257,9 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} -E make_directory ${VIEWER_BUILD_DIR}
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/AGPL-3.0.txt ${VIEWER_BUILD_DIR}/AGPL-3.0.txt
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/images ${VIEWER_BUILD_DIR}/ViewerJS/images
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/index.html ${VIEWER_BUILD_DIR}/ViewerJS/index.html
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/viewer.min.js ${VIEWER_BUILD_DIR}/ViewerJS/viewer.js
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/viewer.css ${VIEWER_BUILD_DIR}/ViewerJS/viewer.css
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/index.html ${VIEWER_BUILD_DIR}/ViewerJS/index.html
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/example.local.css ${VIEWER_BUILD_DIR}/ViewerJS/example.local.css
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/ODFViewerPlugin.min.js ${VIEWER_BUILD_DIR}/ViewerJS/ODFViewerPlugin.js
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/ODFViewerPlugin.css ${VIEWER_BUILD_DIR}/ViewerJS/ODFViewerPlugin.css
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${WEBODF_BUILD_DIR}/webodf/webodf.js ${VIEWER_BUILD_DIR}/ViewerJS
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/PDFViewerPlugin.min.js ${VIEWER_BUILD_DIR}/ViewerJS/PDFViewerPlugin.js
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/PDFViewerPlugin.css ${VIEWER_BUILD_DIR}/ViewerJS/PDFViewerPlugin.css
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_BINARY_DIR}/pdfjsversion.js ${VIEWER_BUILD_DIR}/ViewerJS/pdfjsversion.js
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PDFJS_SOURCE_DIR}/build/pdf.js ${VIEWER_BUILD_DIR}/ViewerJS/pdf.js
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PDFJS_SOURCE_DIR}/build/pdf.worker.js ${VIEWER_BUILD_DIR}/ViewerJS/pdf.worker.js
@@ -231,21 +269,16 @@ add_custom_command(
     DEPENDS
         WebODF
         PDFjs
-        viewer.min.js-target
+        index.html-target
         ${VIEWER_IMAGES}
         index.html
-        viewer.css
         example.local.css
-        ODFViewerPlugin.min.js-target
-        ODFViewerPlugin.css
-        PDFViewerPlugin.min.js-target
-        PDFViewerPlugin.css
 )
 
 add_custom_command(
     OUTPUT ${VIEWERZIP}
     COMMENT "Creating ${VIEWERZIPNAME}"
-    COMMAND node ARGS ${WEBODF_SOURCE_DIR}/webodf/lib/runtime.js ${WEBODF_SOURCE_DIR}/webodf/tools/zipdir.js
+    COMMAND node ${RUNTIMEJS} ${TOOLS_DIR}/zipdir.js
         ${VIEWER_BUILD_DIR}
         ${VIEWERZIP}
     DEPENDS
@@ -264,9 +297,9 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${VIEWER_BUILD_DIR}/ViewerJS ${WORDPRESS_ZIP_DIR}
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/viewerjs-plugin-README.txt ${WORDPRESS_ZIP_DIR}
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/viewerjs-plugin.php ${WORDPRESS_ZIP_DIR}
-    COMMAND node ARGS ${WEBODF_SOURCE_DIR}/webodf/lib/runtime.js ${WEBODF_SOURCE_DIR}/webodf/tools/zipdir.js
-    ${WORDPRESS_ZIP_DIR}
-    ${WORDPRESSZIP}
+    COMMAND node ${RUNTIMEJS} ${TOOLS_DIR}/zipdir.js
+        ${WORDPRESS_ZIP_DIR}
+        ${WORDPRESSZIP}
     DEPENDS
         ${VIEWER_BUILD_DIR}/ViewerJS
 )

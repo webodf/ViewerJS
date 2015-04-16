@@ -49,12 +49,12 @@ function ODFViewerPlugin() {
             callback();
         };
 
-        document.getElementsByTagName('head')[0].appendChild(lib);
+        document.head.appendChild(lib);
 
-        pluginCSS = document.createElement('link');
-        pluginCSS.setAttribute("rel", "stylesheet");
-        pluginCSS.setAttribute("type", "text/css");
-        pluginCSS.setAttribute("href", "./ODFViewerPlugin.css");
+        pluginCSS = /**@type{!HTMLStyleElement}*/(document.createElementNS(document.head.namespaceURI, 'style'));
+        pluginCSS.setAttribute('media', 'screen, print, handheld, projection');
+        pluginCSS.setAttribute('type', 'text/css');
+        pluginCSS.appendChild(document.createTextNode(ODFViewerPlugin_css));
         document.head.appendChild(pluginCSS);
     }
 

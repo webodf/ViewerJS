@@ -59,21 +59,11 @@ limitations under the License.
         <link rel="stylesheet" type="text/css" href="local.css" media="screen"/>
         -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
-        <script type="text/javascript">
-function loadPlugin(pluginName, callback) {
-    "use strict";
-    var script, style;
-
-    // Load script
-    script = document.createElement('script');
-    script.async = false;
-    script.onload = callback;
-    script.src = pluginName + '.js';
-    script.type = 'text/javascript';
-    document.head.appendChild(script);
-}
+                <script type="text/javascript">
+            ////<![CDATA[
+@VIEWERJS_START@@VIEWERJS_END@
+//]]>
         </script>
-        <script src="viewer.js" type="text/javascript" charset="utf-8"></script>
     </head>
 
     <body>

@@ -24,10 +24,11 @@
 
 /*global document, window, Viewer, ODFViewerPlugin, PDFViewerPlugin*/
 
-function loadDocument() {
+(function () {
     "use strict";
 
-    var pluginRegistry = [
+    var css,
+        pluginRegistry = [
         (function() {
             var odfMimetypes = [
                 'application/vnd.oasis.opendocument.text',
@@ -72,19 +73,6 @@ function loadDocument() {
             getClass: function() { return PDFViewerPlugin; }
         }
     ];
-
-    function loadPlugin(pluginName, callback) {
-        "use strict";
-        var script, style;
-
-        // Load script
-        script = document.createElement('script');
-        script.async = false;
-        script.onload = callback;
-        script.src = pluginName + '.js';
-        script.type = 'text/javascript';
-        document.getElementsByTagName('head')[0].appendChild(script);
-    }
 
 
     function estimateTypeByHeaderContentType(documentUrl, cb) {
@@ -198,10 +186,15 @@ function loadDocument() {
                 }
 
                 if (pluginData) {
-                    loadPlugin(pluginData.path, function () {
+                    if (String(typeof loadPlugin) !== "undefined") {
+                        loadPlugin(pluginData.path, function () {
+                            Plugin = pluginData.getClass();
+                            viewer = new Viewer(new Plugin(), parameters);
+                        });
+                    } else {
                         Plugin = pluginData.getClass();
                         viewer = new Viewer(new Plugin(), parameters);
-                   });
+                    }
                 } else {
                     viewer = new Viewer();
                 }
@@ -210,4 +203,18 @@ function loadDocument() {
             viewer = new Viewer();
         }
     };
-}
+
+    css = /**@type{!HTMLStyleElement}*/(document.createElementNS(document.head.namespaceURI, 'style'));
+    css.setAttribute('media', 'screen');
+    css.setAttribute('type', 'text/css');
+    css.appendChild(document.createTextNode(viewer_css));
+    document.head.appendChild(css);
+
+    css = /**@type{!HTMLStyleElement}*/(document.createElementNS(document.head.namespaceURI, 'style'));
+    css.setAttribute('media', 'only screen and (max-device-width: 800px) and (max-device-height: 800px)');
+    css.setAttribute('type', 'text/css');
+    css.setAttribute('viewerTouch', '1');
+    css.appendChild(document.createTextNode(viewerTouch_css));
+    document.head.appendChild(css);
+
+}());

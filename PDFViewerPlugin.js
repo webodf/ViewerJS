@@ -47,10 +47,10 @@ function PDFViewerPlugin() {
             loadScript('./pdfjsversion.js', callback);
         });
 
-        pluginCSS = document.createElement('link');
-        pluginCSS.setAttribute("rel", "stylesheet");
-        pluginCSS.setAttribute("type", "text/css");
-        pluginCSS.setAttribute("href", "./PDFViewerPlugin.css");
+        pluginCSS = /**@type{!HTMLStyleElement}*/(document.createElementNS(document.head.namespaceURI, 'style'));
+        pluginCSS.setAttribute('media', 'screen, print, handheld, projection');
+        pluginCSS.setAttribute('type', 'text/css');
+        pluginCSS.appendChild(document.createTextNode(PDFViewerPlugin_css));
         document.head.appendChild(pluginCSS);
     }
 
