@@ -1,125 +1,265 @@
 # 
-# Copyright (C) 2013 KO GmbH <copyright@kogmbh.com>
+# Copyright (C) 2013-2015 KO GmbH <copyright@kogmbh.com>
 #
 # @licstart
-# This program is free software: you can redistribute it
-# and/or modify it under the terms of the GNU Affero General Public License
-# (GNU AGPL) as published by the Free Software Foundation, either version 3 of
-# the License, or (at your option) any later version.  The code is distributed
-# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU AGPL for more details.
-# 
-# As additional permission under GNU AGPL version 3 section 7, you
-# may distribute non-source (e.g., minimized or compacted) forms of
-# that code without the copy of the GNU GPL normally required by
-# section 4, provided you include this license notice and a URL
-# through which recipients can access the Corresponding Source.
-# 
-# As a special exception to the AGPL, any HTML file which merely makes function
-# calls to this code, and for that purpose includes it by reference shall be
-# deemed a separate work for copyright law purposes. In addition, the copyright
-# holders of this code give you permission to combine this code with free
-# software libraries that are released under the GNU LGPL. You may copy and
-# distribute such a system following the terms of the GNU AGPL for this code
-# and the LGPL for the libraries. If you modify this code, you may extend this
-# exception to your version of the code, but you are not obligated to do so.
-# If you do not wish to do so, delete this exception statement from your
-# version.
-# 
-# This license applies to this entire compilation.
+# This file is part of ViewerJS.
+#
+# ViewerJS is free software: you can redistribute it and/or modify it
+# under the terms of the GNU Affero General Public License (GNU AGPL)
+# as published by the Free Software Foundation, either version 3 of
+# the License, or (at your option) any later version.
+#
+# ViewerJS is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with ViewerJS.  If not, see <http://www.gnu.org/licenses/>.
 # @licend
+#
 # @source: http://viewerjs.org/
 # @source: http://github.com/kogmbh/ViewerJS
 # 
 
-project (ViewerJS)
+project(ViewerJS)
 cmake_minimum_required(VERSION 2.8.6)
 
-SET(OVERRULED_VIEWERJS_VERSION "" CACHE STRING "ViewerJS Version to overrule")
-IF (OVERRULED_VIEWERJS_VERSION)
-    set (VIEWERJS_VERSION ${OVERRULED_VIEWERJS_VERSION})
-ELSE (OVERRULED_VIEWERJS_VERSION)
-    # At this point, the version number that is used throughout is defined
-    set(VIEWERJS_VERSION 0.5.6)
-ENDIF (OVERRULED_VIEWERJS_VERSION)
-
-if (CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
   message(FATAL_ERROR "Compiling in the source directory is not supported. Use for example 'mkdir build; cd build; cmake ..'.")
-endif (CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
+endif(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
 
-MESSAGE ( STATUS "Building ViewerJS version: ${VIEWERJS_VERSION}" )
+
+#########################################################
+## Find installed dependencies
+#########################################################
+
 # Tools must be obtained to work with:
-include (ExternalProject)
+include(ExternalProject)
+
+# java runtime is needed for Closure Compiler
+find_package(Java COMPONENTS Runtime REQUIRED)
+
+
+#########################################################
+## Download stuff that is not commonly installed/packaged
+#########################################################
 
 # allow specification of a directory with pre-downloaded
 # requirements by evaluating environment variable
 # $VIEWERJS_DOWNLOAD_DIR
 # defaults to ./downloads in the build directory.
-if ( IS_DIRECTORY $ENV{VIEWERJS_DOWNLOAD_DIR} )
-    SET ( EXTERNALS_DOWNLOAD_DIR $ENV{VIEWERJS_DOWNLOAD_DIR} )
-else ( IS_DIRECTORY $ENV{VIEWERJS_DOWNLOAD_DIR} )
-    SET ( EXTERNALS_DOWNLOAD_DIR ${CMAKE_BINARY_DIR}/downloads )
-endif ( IS_DIRECTORY $ENV{VIEWERJS_DOWNLOAD_DIR} )
-MESSAGE ( STATUS "external downloads will be stored/expected in: ${EXTERNALS_DOWNLOAD_DIR}" )
+if( IS_DIRECTORY $ENV{VIEWERJS_DOWNLOAD_DIR} )
+    set( EXTERNALS_DOWNLOAD_DIR $ENV{VIEWERJS_DOWNLOAD_DIR} )
+else()
+    set( EXTERNALS_DOWNLOAD_DIR ${CMAKE_BINARY_DIR}/downloads )
+endif()
+message( STATUS "external downloads will be stored/expected in: ${EXTERNALS_DOWNLOAD_DIR}" )
 
-SET ( VIEWER_BUILD_DIR ${CMAKE_BINARY_DIR}/viewerjs-${VIEWERJS_VERSION} )
-FILE ( MAKE_DIRECTORY ${VIEWER_BUILD_DIR})
-SET ( VIEWERZIP ${CMAKE_BINARY_DIR}/viewerjs-${VIEWERJS_VERSION}.zip)
-SET ( WEBODF_SOURCE_DIR ${CMAKE_BINARY_DIR}/WebODF-source )
+# Closure Compiler
+ExternalProject_Add(
+    ClosureCompiler
+    DOWNLOAD_DIR ${EXTERNALS_DOWNLOAD_DIR}
+    URL "http://dl.google.com/closure-compiler/compiler-20130823.tar.gz"
+    URL_MD5 105db24c4676e23f2495adfdea3159bc
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+)
+set(CLOSURE_JAR ${CMAKE_BINARY_DIR}/ClosureCompiler-prefix/src/ClosureCompiler/compiler.jar)
 
-SET ( WORDPRESS_ZIP_DIR ${CMAKE_CURRENT_BINARY_DIR}/viewerjs-wordpress-${VIEWERJS_VERSION})
-SET ( WORDPRESSZIP ${WORDPRESS_ZIP_DIR}.zip)
 
-set (WEBODF_VERSION v0.5.6)
+#########################################################
+## Configure any variables
+#########################################################
+
+set(OVERRULED_VIEWERJS_VERSION "" CACHE STRING "ViewerJS Version to overrule")
+if(OVERRULED_VIEWERJS_VERSION)
+    set (VIEWERJS_VERSION ${OVERRULED_VIEWERJS_VERSION})
+else()
+    # At this point, the version number that is used throughout is defined
+    set(VIEWERJS_VERSION 0.5.6)
+endif()
+message(STATUS "Building ViewerJS version: ${VIEWERJS_VERSION}" )
+
+set( VIEWER_BUILD_DIR ${CMAKE_BINARY_DIR}/viewerjs-${VIEWERJS_VERSION} )
+set( VIEWERZIPNAME viewerjs-${VIEWERJS_VERSION}.zip)
+set( VIEWERZIP ${CMAKE_BINARY_DIR}/${VIEWERZIPNAME})
+
+set( PDFJS_SOURCE_DIR ${CMAKE_BINARY_DIR}/PDFJS-source )
+
+set( WEBODF_SOURCE_DIR ${CMAKE_BINARY_DIR}/WebODF-source )
+set( WEBODF_BUILD_DIR ${CMAKE_BINARY_DIR}/WebODF-build )
+
+set( WORDPRESS_ZIP_DIR ${CMAKE_CURRENT_BINARY_DIR}/viewerjs-wordpress-${VIEWERJS_VERSION})
+set( WORDPRESSZIPNAME viewerjs-wordpress-${VIEWERJS_VERSION}.zip)
+set( WORDPRESSZIP ${CMAKE_BINARY_DIR}/${WORDPRESSZIPNAME})
+
+# HEADERCOMPILED_FILE defines the file to use as header for the compiled ViewerJS files.
+# Per default that is HeaderCompiled.js
+# For release builds it can be overwritten by passing -DHEADERCOMPILED_FILE=/path/to/file
+# to cmake.
+if(NOT HEADERCOMPILED_FILE)
+  set(HEADERCOMPILED_FILE "${CMAKE_SOURCE_DIR}/HeaderCompiled.js")
+elseif(NOT IS_ABSOLUTE ${HEADERCOMPILED_FILE})
+  set(HEADERCOMPILED_FILE ${CMAKE_BINARY_DIR}/${HEADERCOMPILED_FILE})
+endif()
+
+
+#########################################################
+## Build external projects
+#########################################################
+
+set(WEBODF_VERSION v0.5.6)
 ExternalProject_Add(
     WebODF
     GIT_REPOSITORY https://github.com/kogmbh/WebODF.git
     GIT_TAG ${WEBODF_VERSION}
     SOURCE_DIR ${WEBODF_SOURCE_DIR}
+    BINARY_DIR ${WEBODF_BUILD_DIR}
     UPDATE_COMMAND ""
-    BUILD_COMMAND make product-viewerjsdir
-    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/viewer/ ${CMAKE_BINARY_DIR}/viewer
+    BUILD_COMMAND make webodf.js-target
+    INSTALL_COMMAND ""
 )
 
-set (PDFJS_VERSION v1.0.1040)
+set(PDFJS_VERSION v1.0.1040)
 ExternalProject_Add(
     PDFjs
     GIT_REPOSITORY https://github.com/mozilla/pdf.js.git
     GIT_TAG ${PDFJS_VERSION}
+    SOURCE_DIR ${PDFJS_SOURCE_DIR}
     UPDATE_COMMAND ""
     CONFIGURE_COMMAND ""
     BUILD_IN_SOURCE "1"
     BUILD_COMMAND node make generic
-    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/build/pdf.js ${CMAKE_BINARY_DIR}/viewer/pdf.js
-    COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/build/pdf.worker.js ${CMAKE_BINARY_DIR}/viewer/pdf.worker.js
-    COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/web/compatibility.js ${CMAKE_BINARY_DIR}/viewer/compatibility.js
-    COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/web/ui_utils.js ${CMAKE_BINARY_DIR}/viewer/ui_utils.js
-    COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/web/text_layer_builder.js ${CMAKE_BINARY_DIR}/viewer/text_layer_builder.js
+    INSTALL_COMMAND ""
+)
+
+# files for the viewer
+set(VIEWER_IMAGES
+    images/texture.png
+    images/toolbarButton-download.png
+    images/toolbarButton-fullscreen.png
+    images/toolbarButton-menuArrows.png
+    images/toolbarButton-pageDown.png
+    images/toolbarButton-pageUp.png
+    images/toolbarButton-zoomIn.png
+    images/toolbarButton-zoomOut.png
+    images/nlnet.png
+    images/kogmbh.png
+)
+
+configure_file(viewerjsversion.js.in ${CMAKE_CURRENT_BINARY_DIR}/viewerjsversion.js)
+
+configure_file(pdfjsversion.js.in ${CMAKE_BINARY_DIR}/pdfjsversion.js)
+configure_file(viewerjs-plugin.php.in ${CMAKE_CURRENT_BINARY_DIR}/viewerjs-plugin.php)
+
+add_custom_command(
+    OUTPUT viewer.min.js
+    COMMENT "Creating viewer.min.js"
+    COMMAND ${Java_JAVA_EXECUTABLE}
+        -jar ${CLOSURE_JAR}
+        --js ${HEADERCOMPILED_FILE}
+        --js ${CMAKE_CURRENT_BINARY_DIR}/viewerjsversion.js
+        --js ${CMAKE_CURRENT_SOURCE_DIR}/viewer.js
+        --js ${CMAKE_CURRENT_SOURCE_DIR}/PluginLoader.js
+        --compilation_level SIMPLE_OPTIMIZATIONS
+        --js_output_file ${CMAKE_CURRENT_BINARY_DIR}/viewer.min.js
+    DEPENDS
+        ClosureCompiler
+        ${HEADERCOMPILED_FILE}
+        ${CMAKE_CURRENT_BINARY_DIR}/viewerjsversion.js
+        viewer.js
+        PluginLoader.js
+    )
+add_custom_target(viewer.min.js-target DEPENDS viewer.min.js)
+
+add_custom_command(
+    OUTPUT ODFViewerPlugin.min.js
+    COMMENT "Creating ODFViewerPlugin.min.js"
+    COMMAND ${Java_JAVA_EXECUTABLE}
+        -jar ${CLOSURE_JAR}
+        --js ${HEADERCOMPILED_FILE}
+        --js ${CMAKE_CURRENT_SOURCE_DIR}/ODFViewerPlugin.js
+        --compilation_level SIMPLE_OPTIMIZATIONS
+        --js_output_file ${CMAKE_CURRENT_BINARY_DIR}/ODFViewerPlugin.min.js
+    DEPENDS
+        ClosureCompiler
+        ${HEADERCOMPILED_FILE}
+        ODFViewerPlugin.js
+    )
+add_custom_target(ODFViewerPlugin.min.js-target DEPENDS ODFViewerPlugin.min.js)
+
+add_custom_command(
+    OUTPUT PDFViewerPlugin.min.js
+    COMMENT "Creating PDFViewerPlugin.min.js"
+    COMMAND ${Java_JAVA_EXECUTABLE}
+        -jar ${CLOSURE_JAR}
+        --js ${HEADERCOMPILED_FILE}
+        --js ${CMAKE_CURRENT_SOURCE_DIR}/PDFViewerPlugin.js
+        --compilation_level SIMPLE_OPTIMIZATIONS
+        --js_output_file ${CMAKE_CURRENT_BINARY_DIR}/PDFViewerPlugin.min.js
+    DEPENDS
+        ClosureCompiler
+        ${HEADERCOMPILED_FILE}
+        PDFViewerPlugin.js
+    )
+add_custom_target(PDFViewerPlugin.min.js-target DEPENDS PDFViewerPlugin.min.js)
+
+add_custom_command(
+    OUTPUT ${VIEWER_BUILD_DIR}/ViewerJS
+    COMMENT "Creating ViewerJS directory"
+    COMMAND ${CMAKE_COMMAND} -E remove_directory ${VIEWER_BUILD_DIR}
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${VIEWER_BUILD_DIR}
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/AGPL-3.0.txt ${VIEWER_BUILD_DIR}/AGPL-3.0.txt
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/images ${VIEWER_BUILD_DIR}/ViewerJS/images
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/index.html ${VIEWER_BUILD_DIR}/ViewerJS/index.html
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/viewer.min.js ${VIEWER_BUILD_DIR}/ViewerJS/viewer.js
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/viewer.css ${VIEWER_BUILD_DIR}/ViewerJS/viewer.css
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/example.local.css ${VIEWER_BUILD_DIR}/ViewerJS/example.local.css
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/ODFViewerPlugin.min.js ${VIEWER_BUILD_DIR}/ViewerJS/ODFViewerPlugin.js
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/ODFViewerPlugin.css ${VIEWER_BUILD_DIR}/ViewerJS/ODFViewerPlugin.css
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${WEBODF_BUILD_DIR}/webodf/webodf.js ${VIEWER_BUILD_DIR}/ViewerJS
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/PDFViewerPlugin.min.js ${VIEWER_BUILD_DIR}/ViewerJS/PDFViewerPlugin.js
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/PDFViewerPlugin.css ${VIEWER_BUILD_DIR}/ViewerJS/PDFViewerPlugin.css
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_BINARY_DIR}/pdfjsversion.js ${VIEWER_BUILD_DIR}/ViewerJS/pdfjsversion.js
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PDFJS_SOURCE_DIR}/build/pdf.js ${VIEWER_BUILD_DIR}/ViewerJS/pdf.js
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PDFJS_SOURCE_DIR}/build/pdf.worker.js ${VIEWER_BUILD_DIR}/ViewerJS/pdf.worker.js
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PDFJS_SOURCE_DIR}/web/compatibility.js ${VIEWER_BUILD_DIR}/ViewerJS/compatibility.js
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PDFJS_SOURCE_DIR}/web/ui_utils.js ${VIEWER_BUILD_DIR}/ViewerJS/ui_utils.js
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PDFJS_SOURCE_DIR}/web/text_layer_builder.js ${VIEWER_BUILD_DIR}/ViewerJS/text_layer_builder.js
+    DEPENDS
+        WebODF
+        PDFjs
+        viewer.min.js-target
+        ${VIEWER_IMAGES}
+        index.html
+        viewer.css
+        example.local.css
+        ODFViewerPlugin.min.js-target
+        ODFViewerPlugin.css
+        PDFViewerPlugin.min.js-target
+        PDFViewerPlugin.css
 )
 
 add_custom_command(
     OUTPUT ${VIEWERZIP}
-    COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_BINARY_DIR}/viewer ${VIEWER_BUILD_DIR}/ViewerJS
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/PluginLoader.js ${VIEWER_BUILD_DIR}/ViewerJS/PluginLoader.js
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/PDFViewerPlugin.js ${VIEWER_BUILD_DIR}/ViewerJS/PDFViewerPlugin.js
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/PDFViewerPlugin.css ${VIEWER_BUILD_DIR}/ViewerJS/PDFViewerPlugin.css
+    COMMENT "Creating ${VIEWERZIPNAME}"
     COMMAND node ARGS ${WEBODF_SOURCE_DIR}/webodf/lib/runtime.js ${WEBODF_SOURCE_DIR}/webodf/tools/zipdir.js
-    ${VIEWER_BUILD_DIR}
-    ${VIEWERZIP}
+        ${VIEWER_BUILD_DIR}
+        ${VIEWERZIP}
+    DEPENDS
+        ${VIEWER_BUILD_DIR}/ViewerJS
 )
-
 
 add_custom_target(Viewer ALL
     DEPENDS
-    ${VIEWERZIP}
-    WebODF
-    PDFjs
+        ${VIEWERZIP}
 )
-configure_file(pdfjsversion.js.in ${CMAKE_BINARY_DIR}/viewer/pdfjsversion.js)
-configure_file(viewerjs-plugin.php.in ${CMAKE_CURRENT_BINARY_DIR}/viewerjs-plugin.php)
 
 add_custom_command(
     OUTPUT ${WORDPRESSZIP}
+    COMMENT "Creating ${WORDPRESSZIPNAME}"
     COMMAND ${CMAKE_COMMAND} -E remove_directory ${WORDPRESS_ZIP_DIR}
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${VIEWER_BUILD_DIR}/ViewerJS ${WORDPRESS_ZIP_DIR}
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/viewerjs-plugin-README.txt ${WORDPRESS_ZIP_DIR}
@@ -127,11 +267,12 @@ add_custom_command(
     COMMAND node ARGS ${WEBODF_SOURCE_DIR}/webodf/lib/runtime.js ${WEBODF_SOURCE_DIR}/webodf/tools/zipdir.js
     ${WORDPRESS_ZIP_DIR}
     ${WORDPRESSZIP}
+    DEPENDS
+        ${VIEWER_BUILD_DIR}/ViewerJS
 )
 
 add_custom_target(wordpress-plugin ALL
     DEPENDS
-    ${WORDPRESSZIP}
-    Viewer
+        ${WORDPRESSZIP}
 )
 
