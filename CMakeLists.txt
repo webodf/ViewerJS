@@ -112,7 +112,7 @@ endif()
 ## Build external projects
 #########################################################
 
-set(WEBODF_VERSION v0.5.6)
+set(WEBODF_VERSION v0.5.7)
 ExternalProject_Add(
     WebODF
     GIT_REPOSITORY https://github.com/kogmbh/WebODF.git
