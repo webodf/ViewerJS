@@ -78,7 +78,7 @@ if(OVERRULED_VIEWERJS_VERSION)
     set (VIEWERJS_VERSION ${OVERRULED_VIEWERJS_VERSION})
 else()
     # At this point, the version number that is used throughout is defined
-    set(VIEWERJS_VERSION 0.5.6)
+    set(VIEWERJS_VERSION 0.5.7)
 endif()
 message(STATUS "Building ViewerJS version: ${VIEWERJS_VERSION}" )
 
