@@ -1,6 +1,6 @@
 # ViewerJS
 
-ViewerJS combines a number of excellent open source tools that are built on HTML and javascript. ViewerJS was funded by [NLnet foundation](http://nlnet.nl) and developed by [KO GmbH](http://kogmbh.com).
+ViewerJS combines a number of excellent open source tools that are built on HTML and javascript. ViewerJS was funded by [NLnet foundation](https://nlnet.nl) and developed by [KO GmbH](http://kogmbh.com).
 
 The heavy lifting in ViewerJS is done by these awesome projects:
 

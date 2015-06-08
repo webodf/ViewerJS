@@ -107,7 +107,7 @@ function Viewer(viewerPlugin, parameters) {
                             "plugin to show you this document.</p>")
                          : "") +
             "<p>Version " + version + "</p>" +
-            "<p>Supported by <a href=\"http://nlnet.nl\" target=\"_blank\"><br><img src=\"images\/nlnet.png\" width=\"160\" height=\"60\" alt=\"NLnet Foundation\"></a></p>" +
+            "<p>Supported by <a href=\"https://nlnet.nl\" target=\"_blank\"><br><img src=\"images\/nlnet.png\" width=\"160\" height=\"60\" alt=\"NLnet Foundation\"></a></p>" +
             "<p>Made by <a href=\"http://kogmbh.com\" target=\"_blank\"><br><img src=\"images\/kogmbh.png\" width=\"172\" height=\"40\" alt=\"KO GmbH\"></a></p>" +
             "<button id = \"aboutDialogCloseButton\" class = \"toolbarButton textButton\">Close</button>";
         dialogOverlay.appendChild(aboutDialogCentererTable);
