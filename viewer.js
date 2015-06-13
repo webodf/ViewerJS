@@ -349,7 +349,7 @@ function Viewer(viewerPlugin, parameters) {
      */
     this.download = function () {
         var documentUrl = url.split('#')[0];
-        documentUrl += '#viewer.action=download';
+        documentUrl += '&contentDispositionType=attachment';
         window.open(documentUrl, '_parent');
     };
 
