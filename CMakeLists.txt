@@ -133,7 +133,7 @@ ExternalProject_Add(
     UPDATE_COMMAND ""
     CONFIGURE_COMMAND ""
     BUILD_IN_SOURCE "1"
-    BUILD_COMMAND node make generic
+    BUILD_COMMAND npm install && node make generic
     INSTALL_COMMAND ""
 )
 

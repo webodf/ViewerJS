@@ -18,7 +18,7 @@ You can find additional information, some usage guides, and live examples at [th
 
 ### Building
 
-ViewerJS uses [`cmake`](http://cmake.org/). Just follow these steps:
+ViewerJS uses [`cmake`](http://cmake.org/). Also make sure that [`nodejs`](https://nodejs.org/) and [`npm`](https://www.npmjs.com/) is installed to build PDF.js. Just follow these steps:
 
 ```bash
 git clone git@github.com:kogmbh/ViewerJS.git
