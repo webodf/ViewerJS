@@ -59,6 +59,13 @@ limitations under the License.
         <link rel="stylesheet" type="text/css" href="local.css" media="screen"/>
         -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
+        <style>
+        @media print {
+            .no-print, .no-print * {
+                display: none !important;
+            }
+        }
+        </style>
         <script type="text/javascript">
 function loadPlugin(pluginName, callback) {
     "use strict";
@@ -78,15 +85,16 @@ function loadPlugin(pluginName, callback) {
 
     <body>
         <div id = "viewer">
-            <div id = "titlebar">
+            <div id = "titlebar" class = "no-print">
                 <div id = "documentName"></div>
                 <div id = "titlebarRight">
+                    <button id = "print" class = "toolbarButton print" title = "Print"></button>
                     <button id = "presentation" class = "toolbarButton presentation" title = "Presentation"></button>
                     <button id = "fullscreen" class = "toolbarButton fullscreen" title = "Fullscreen"></button>
                     <button id = "download" class = "toolbarButton download" title = "Download"></button>
                 </div>
-           </div>
-            <div id = "toolbarContainer">
+            </div>
+            <div id = "toolbarContainer" class = "no-print">
                 <div id = "toolbar">
                     <div id = "toolbarLeft">
                         <div id = "navButtons" class = "splitToolbarButton">
@@ -131,15 +139,15 @@ function loadPlugin(pluginName, callback) {
             <div id = "canvasContainer">
                 <div id = "canvas"></div>
             </div>
-            <div id = "overlayNavigator">
+            <div id = "overlayNavigator" class = "no-print">
                 <div id = "previousPage"></div>
                 <div id = "nextPage"></div>
             </div>
-            <div id = "overlayCloseButton">
+            <div id = "overlayCloseButton" class = "no-print">
             &#10006;
             </div>
-            <div id = "dialogOverlay"></div>
-            <div id = "blanked"></div>
+            <div id = "dialogOverlay" class = "no-print"></div>
+            <div id = "blanked" class = "no-print"></div>
         </div>
     </body>
 </html>

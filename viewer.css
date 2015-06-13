@@ -503,6 +503,11 @@ html[dir='rtl'] .dropdownToolbarButton {
     content: url(images/toolbarButton-download.png);
 }
 
+.toolbarButton.print::before {
+    display: inline-block;
+    content: url(images/toolbarButton-print.png);
+}
+
 .toolbarButton.about {
     color: #F2F2F2;
     font-size: 14px;

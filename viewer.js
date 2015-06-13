@@ -354,6 +354,14 @@ function Viewer(viewerPlugin, parameters) {
     };
 
     /**
+     * Prints the document canvas.
+     * @return {undefined}
+     */
+    this.printDocument = function() {
+        window.print();
+    }
+
+    /**
      * Toggles the fullscreen state of the viewer
      * @return {undefined}
      */
@@ -549,6 +557,7 @@ function Viewer(viewerPlugin, parameters) {
 
             setButtonClickHandler('overlayCloseButton', self.toggleFullScreen);
             setButtonClickHandler('fullscreen', self.toggleFullScreen);
+            setButtonClickHandler('print', self.printDocument);
             setButtonClickHandler('presentation', function () {
                 if (!isFullScreen) {
                     self.toggleFullScreen();
