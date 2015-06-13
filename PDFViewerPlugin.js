@@ -236,15 +236,36 @@ function PDFViewerPlugin() {
         }
     }
 
+    function passwordCallback(providePassword, reasonCode) {
+       switch(reasonCode) {
+            case PDFJS.PasswordResponses.NEED_PASSWORD:
+                // PDF is password protected, ask the user to provide a password
+                promptForPassword(false, providePassword);
+
+                break;
+            case PDFJS.PasswordResponses.INCORRECT_PASSWORD:
+                // Wrong password was provided, ask the user again
+                promptForPassword(true, providePassword);
+                break;
+        }
+    }
+
+    function promptForPassword(wrongPasswordEntered, providePassword) {
+        var text = wrongPasswordEntered ? "Wrong password entered. Please retry." : "Password protected PDF. Enter password.";
+        var password = prompt(text, "");
+        if (password != null) {
+            providePassword(password);
+        }
+    }
+
     this.initialize = function (viewContainer, location) {
         var self = this,
             i,
             pluginCSS;
 
-
         init(function () {
             PDFJS.workerSrc = "./pdf.worker.js";
-            PDFJS.getDocument(location).then(function loadPDF(doc) {
+            PDFJS.getDocument(location, null, passwordCallback).then(function loadPDF(doc) {
                 pdfDocument = doc;
                 container = viewContainer;
 
