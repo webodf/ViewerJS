@@ -77,12 +77,14 @@
                 'image/jpeg',
                 'image/pjpeg',
 		'image/gif',
-		'image/png'];
+		'image/png',
+		'image/bmp'];
             var imageFileExtensions = [
                 'png',
                 'jpg',
                 'jpeg',
-                'gif'];
+                'gif',
+		'bmp'];
 
             return {
                 supportsMimetype: function(mimetype) {
