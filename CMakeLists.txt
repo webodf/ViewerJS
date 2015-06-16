@@ -213,7 +213,8 @@ add_custom_command(
         --js ${CMAKE_CURRENT_SOURCE_DIR}/ODFViewerPlugin.js
         --js ${CMAKE_CURRENT_BINARY_DIR}/PDFViewerPlugin.css.js
         --js ${CMAKE_CURRENT_SOURCE_DIR}/PDFViewerPlugin.js
-	--js ${CMAKE_CURRENT_SOURCE_DIR}/ImageViewerPlugin.js
+		--js ${CMAKE_CURRENT_SOURCE_DIR}/ImageViewerPlugin.js
+		--js ${CMAKE_CURRENT_SOURCE_DIR}/MultimediaViewerPlugin.js
         --js ${CMAKE_CURRENT_BINARY_DIR}/viewerjsversion.js
         --js ${CMAKE_CURRENT_BINARY_DIR}/viewer.css.js
         --js ${CMAKE_CURRENT_BINARY_DIR}/viewerTouch.css.js
@@ -228,7 +229,8 @@ add_custom_command(
         PDFViewerPlugin.css.js-target
         PDFViewerPlugin.js
         ImageViewerPlugin.js
-	${CMAKE_CURRENT_BINARY_DIR}/viewerjsversion.js
+        MultimediaViewerPlugin.js
+		${CMAKE_CURRENT_BINARY_DIR}/viewerjsversion.js
         viewer.css.js-target
         viewerTouch.css.js-target
         viewer.js
