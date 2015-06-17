@@ -11,8 +11,12 @@ function MultimediaViewerPlugin() {
 		self = this;
 
 	this.initialize = function (viewerElement, documentUrl) {
-		// If the URL has a fragment (#...), try to load the file it represents
-		videoElement=document.createElement("video");
+		if(window.mimetype.indexOf("audio/") === 0) {	
+			videoElement=document.createElement("audio");
+			videoElement.setAttribute('poster', 'images/musicbg.png');
+		} else {
+			videoElement=document.createElement("video");
+		}
 		videoElement.setAttribute('preload', 'auto');
 		videoElement.setAttribute('id', 'multimedia_viewer');
 		videoElement.setAttribute('controls', 'controls');
@@ -20,11 +24,9 @@ function MultimediaViewerPlugin() {
 		
 		videoSource=document.createElement("source");
 		videoSource.setAttribute('src', documentUrl);
-		videoSource.setAttribute('type', 'video/mp4');
+		videoSource.setAttribute('type', window.mimetype);
 		videoElement.appendChild(videoSource);
 
-		videoElement.style.width = "100%";
-		videoElement.style.height = "100%";
 		viewerElement.appendChild(videoElement);
 		viewerElement.style.overflow = "auto";
 		
@@ -67,7 +69,8 @@ function MultimediaViewerPlugin() {
 	};
 
 	this.showPage = function (n) {
-		// do nothing - the image only has one page  
+		// hide middle toolbar
+		document.getElementById('toolbarMiddleContainer').style.visibility = "hidden";
 	};
 
 	this.getPluginName = function () {

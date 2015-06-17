@@ -145,10 +145,12 @@ set(VIEWER_IMAGES
     images/toolbarButton-menuArrows.png
     images/toolbarButton-pageDown.png
     images/toolbarButton-pageUp.png
+    images/toolbarButton-print.png
     images/toolbarButton-zoomIn.png
     images/toolbarButton-zoomOut.png
     images/nlnet.png
     images/kogmbh.png
+    images/musicbg.png
 )
 
 configure_file(viewerjsversion.js.in ${CMAKE_CURRENT_BINARY_DIR}/viewerjsversion.js)
@@ -213,8 +215,8 @@ add_custom_command(
         --js ${CMAKE_CURRENT_SOURCE_DIR}/ODFViewerPlugin.js
         --js ${CMAKE_CURRENT_BINARY_DIR}/PDFViewerPlugin.css.js
         --js ${CMAKE_CURRENT_SOURCE_DIR}/PDFViewerPlugin.js
-		--js ${CMAKE_CURRENT_SOURCE_DIR}/ImageViewerPlugin.js
-		--js ${CMAKE_CURRENT_SOURCE_DIR}/MultimediaViewerPlugin.js
+        --js ${CMAKE_CURRENT_SOURCE_DIR}/ImageViewerPlugin.js
+        --js ${CMAKE_CURRENT_SOURCE_DIR}/MultimediaViewerPlugin.js
         --js ${CMAKE_CURRENT_BINARY_DIR}/viewerjsversion.js
         --js ${CMAKE_CURRENT_BINARY_DIR}/viewer.css.js
         --js ${CMAKE_CURRENT_BINARY_DIR}/viewerTouch.css.js
@@ -230,7 +232,7 @@ add_custom_command(
         PDFViewerPlugin.js
         ImageViewerPlugin.js
         MultimediaViewerPlugin.js
-		${CMAKE_CURRENT_BINARY_DIR}/viewerjsversion.js
+        ${CMAKE_CURRENT_BINARY_DIR}/viewerjsversion.js
         viewer.css.js-target
         viewerTouch.css.js-target
         viewer.js

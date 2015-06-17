@@ -60,12 +60,18 @@ limitations under the License.
         -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
         <style>
+        .video-js {
+            width: 100% !important;
+            height: 100% !important;
+        }
         @media print {
             .no-print, .no-print * {
                 display: none !important;
             }
         }
         </style>
+        <link href="http://vjs.zencdn.net/4.12/video-js.css" rel="stylesheet">
+        <script src="http://vjs.zencdn.net/4.12/video.js"></script>
         <script type="text/javascript">
 function loadPlugin(pluginName, callback) {
     "use strict";

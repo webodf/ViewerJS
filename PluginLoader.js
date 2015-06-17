@@ -151,6 +151,8 @@
 							if (pluginData.supportsMimetype(mimetype)) {
 								matchingPluginData = pluginData;
 								console.log('Found plugin by mimetype and xhr head: ' + mimetype);
+								// store the mimetype globally
+								window.mimetype = mimetype;
 								return true;
 							}
 							return false;
