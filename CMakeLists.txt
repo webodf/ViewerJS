@@ -207,6 +207,18 @@ add_custom_command(
 add_custom_target(PDFViewerPlugin.css.js-target DEPENDS PDFViewerPlugin.css.js)
 
 add_custom_command(
+    OUTPUT ImageViewerPlugin.css.js
+    COMMAND node ${RUNTIMEJS} ${TOOLS_DIR}/css2js.js
+        ImageViewerPlugin.css ${CMAKE_CURRENT_BINARY_DIR}/ImageViewerPlugin.css.js
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    DEPENDS
+        WebODF
+        ${TOOLS_DIR}/css2js.js
+        ImageViewerPlugin.css
+)
+add_custom_target(ImageViewerPlugin.css.js-target DEPENDS ImageViewerPlugin.css.js)
+
+add_custom_command(
     OUTPUT viewer.min.js
     COMMENT "Creating viewer.min.js"
     COMMAND ${Java_JAVA_EXECUTABLE}
@@ -215,6 +227,7 @@ add_custom_command(
         --js ${CMAKE_CURRENT_SOURCE_DIR}/ODFViewerPlugin.js
         --js ${CMAKE_CURRENT_BINARY_DIR}/PDFViewerPlugin.css.js
         --js ${CMAKE_CURRENT_SOURCE_DIR}/PDFViewerPlugin.js
+        --js ${CMAKE_CURRENT_BINARY_DIR}/ImageViewerPlugin.css.js
         --js ${CMAKE_CURRENT_SOURCE_DIR}/ImageViewerPlugin.js
         --js ${CMAKE_CURRENT_SOURCE_DIR}/MultimediaViewerPlugin.js
         --js ${CMAKE_CURRENT_BINARY_DIR}/viewerjsversion.js
@@ -230,6 +243,7 @@ add_custom_command(
         ODFViewerPlugin.js
         PDFViewerPlugin.css.js-target
         PDFViewerPlugin.js
+        ImageViewerPlugin.css.js-target
         ImageViewerPlugin.js
         MultimediaViewerPlugin.js
         ${CMAKE_CURRENT_BINARY_DIR}/viewerjsversion.js
@@ -263,6 +277,7 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} -E make_directory ${VIEWER_BUILD_DIR}
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/AGPL-3.0.txt ${VIEWER_BUILD_DIR}/AGPL-3.0.txt
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/images ${VIEWER_BUILD_DIR}/ViewerJS/images
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/video-js ${VIEWER_BUILD_DIR}/ViewerJS/video-js
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/index.html ${VIEWER_BUILD_DIR}/ViewerJS/index.html
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/example.local.css ${VIEWER_BUILD_DIR}/ViewerJS/example.local.css
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${WEBODF_BUILD_DIR}/webodf/webodf.js ${VIEWER_BUILD_DIR}/ViewerJS
