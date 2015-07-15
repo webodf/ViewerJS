@@ -80,7 +80,7 @@ vjs.ACCESS_PROTOCOL = ('https:' == document.location.protocol ? 'https://' : 'ht
 * Full player version
 * @type {string}
 */
-vjs['VERSION'] = '4.12.7';
+vjs['VERSION'] = '4.12.11';
 
 /**
  * Global Player instance options, surfaced from vjs.Player.prototype.options_
@@ -1302,6 +1302,18 @@ vjs.round = function(num, dec) {
  * @private
  */
 vjs.createTimeRange = function(start, end){
+  if (start === undefined && end === undefined) {
+    return {
+      length: 0,
+      start: function() {
+        throw new Error('This TimeRanges object is empty');
+      },
+      end: function() {
+        throw new Error('This TimeRanges object is empty');
+      }
+    };
+  }
+
   return {
     length: 1,
     start: function() { return start; },
@@ -5160,6 +5172,13 @@ vjs.Player.prototype.ended = function(){ return this.techGet('ended'); };
  */
 vjs.Player.prototype.seeking = function(){ return this.techGet('seeking'); };
 
+/**
+ * Returns the TimeRanges of the media that are currently available
+ * for seeking to.
+ * @return {TimeRanges} the seekable intervals of the media timeline
+ */
+vjs.Player.prototype.seekable = function(){ return this.techGet('seekable'); };
+
 // When the player is first initialized, trigger activity so components
 // like the control bar show themselves if needed
 vjs.Player.prototype.userActivity_ = true;
@@ -7381,10 +7400,27 @@ vjs.Html5.prototype.exitFullScreen = function(){
   this.el_.webkitExitFullScreen();
 };
 
+// Checks to see if the element's reported URI (either from `el_.src`
+// or `el_.currentSrc`) is a blob-uri and, if so, returns the uri that
+// was passed into the source-handler when it was first invoked instead
+// of the blob-uri
+vjs.Html5.prototype.returnOriginalIfBlobURI_ = function (elementURI, originalURI) {
+  var blobURIRegExp = /^blob\:/i;
+
+  // If originalURI is undefined then we are probably in a non-source-handler-enabled
+  // tech that inherits from the Html5 tech so we should just return the elementURI
+  // regardless of it's blobby-ness
+  if (originalURI && elementURI && blobURIRegExp.test(elementURI)) {
+    return originalURI;
+  }
+  return elementURI;
+};
 
 vjs.Html5.prototype.src = function(src) {
+  var elementSrc = this.el_.src;
+
   if (src === undefined) {
-    return this.el_.src;
+    return this.returnOriginalIfBlobURI_(elementSrc, this.source_);
   } else {
     // Setting src through `src` instead of `setSrc` will be deprecated
     this.setSrc(src);
@@ -7396,7 +7432,15 @@ vjs.Html5.prototype.setSrc = function(src) {
 };
 
 vjs.Html5.prototype.load = function(){ this.el_.load(); };
-vjs.Html5.prototype.currentSrc = function(){ return this.el_.currentSrc; };
+vjs.Html5.prototype.currentSrc = function(){
+  var elementSrc = this.el_.currentSrc;
+
+  if (!this.currentSource_) {
+    return elementSrc;
+  }
+
+  return this.returnOriginalIfBlobURI_(elementSrc, this.currentSource_.src);
+};
 
 vjs.Html5.prototype.poster = function(){ return this.el_.poster; };
 vjs.Html5.prototype.setPoster = function(val){ this.el_.poster = val; };
@@ -7415,6 +7459,7 @@ vjs.Html5.prototype.setLoop = function(val){ this.el_.loop = val; };
 
 vjs.Html5.prototype.error = function(){ return this.el_.error; };
 vjs.Html5.prototype.seeking = function(){ return this.el_.seeking; };
+vjs.Html5.prototype.seekable = function(){ return this.el_.seekable; };
 vjs.Html5.prototype.ended = function(){ return this.el_.ended; };
 vjs.Html5.prototype.defaultMuted = function(){ return this.el_.defaultMuted; };
 
@@ -7529,6 +7574,28 @@ vjs.Html5.isSupported = function(){
 
 // Add Source Handler pattern functions to this tech
 vjs.MediaTechController.withSourceHandlers(vjs.Html5);
+
+/*
+ * Override the withSourceHandler mixin's methods with our own because
+ * the HTML5 Media Element returns blob urls when utilizing MSE and we
+ * want to still return proper source urls even when in that case
+ */
+(function(){
+  var
+    origSetSource = vjs.Html5.prototype.setSource,
+    origDisposeSourceHandler = vjs.Html5.prototype.disposeSourceHandler;
+
+  vjs.Html5.prototype.setSource = function (source) {
+    var retVal = origSetSource.call(this, source);
+    this.source_ = source.src;
+    return retVal;
+  };
+
+  vjs.Html5.prototype.disposeSourceHandler = function () {
+    this.source_ = undefined;
+    return origDisposeSourceHandler.call(this);
+  };
+})();
 
 /**
  * The default native source handler.
@@ -7920,8 +7987,27 @@ vjs.Flash.prototype['setPoster'] = function(){
   // poster images are not handled by the Flash tech so make this a no-op
 };
 
+vjs.Flash.prototype.seekable = function() {
+  var duration = this.duration();
+  if (duration === 0) {
+    // The SWF reports a duration of zero when the actual duration is unknown
+    return vjs.createTimeRange();
+  }
+  return vjs.createTimeRange(0, this.duration());
+};
+
 vjs.Flash.prototype.buffered = function(){
+  if (!this.el_.vjs_getProperty) {
+    return vjs.createTimeRange();
+  }
   return vjs.createTimeRange(0, this.el_.vjs_getProperty('buffered'));
+};
+
+vjs.Flash.prototype.duration = function(){
+  if (!this.el_.vjs_getProperty) {
+    return 0;
+  }
+  return this.el_.vjs_getProperty('duration');
 };
 
 vjs.Flash.prototype.supportsFullScreen = function(){
@@ -7936,7 +8022,7 @@ vjs.Flash.prototype.enterFullScreen = function(){
   // Create setters and getters for attributes
   var api = vjs.Flash.prototype,
     readWrite = 'rtmpConnection,rtmpStream,preload,defaultPlaybackRate,playbackRate,autoplay,loop,mediaGroup,controller,controls,volume,muted,defaultMuted'.split(','),
-    readOnly = 'error,networkState,readyState,seeking,initialTime,duration,startOffsetTime,paused,played,seekable,ended,videoTracks,audioTracks,videoWidth,videoHeight'.split(','),
+    readOnly = 'error,networkState,readyState,seeking,initialTime,startOffsetTime,paused,played,ended,videoTracks,audioTracks,videoWidth,videoHeight'.split(','),
     // Overridden: buffered, currentTime, currentSrc
     i;
 

@@ -187,6 +187,9 @@
 
 		if (matchingPluginData) {
 			console.log('Found plugin by parameter type: ' + extension);
+			
+			// this is needed for the Multimedia Plugin
+			window.mimetype = getMimeByExtension(extension);
 		}
 
 		return matchingPluginData;
@@ -222,6 +225,30 @@
 		});
 
 		return parameters;
+	}
+	
+	function getMimeByExtension(ext) {
+		var extToMimes = {
+			'aac' : 'audio/aac',
+			'mp4' : 'video/mp4',
+			'm4a' : 'audio/mp4',
+			'mp3' : 'audio/mpeg',
+			'mpg' : 'video/mpeg',
+			'mpeg': 'video/mpeg',
+			'ogg' : 'video/ogg',
+			'wav' : 'audio/wav',
+			'webm': 'video/webm',
+			'm4v' : 'video/mp4',
+			'ogv' : 'video/ogg',
+			'oga' : 'audio/ogg',
+			'mp1' : 'audio/mpeg',
+			'mp2' : 'audio/mpeg'
+		};
+		
+		if (extToMimes.hasOwnProperty(ext)) {
+           return extToMimes[ext];
+        }
+        return false;
 	}
 
 
