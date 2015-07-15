@@ -124,6 +124,10 @@ select {
     visibility: hidden;
 }
 
+#toolbarMiddleContainer {
+    z-index: -1;
+}
+
 html[dir='ltr'] #toolbarLeft {
     margin-left: -1px;
 }
