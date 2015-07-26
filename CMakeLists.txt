@@ -112,7 +112,7 @@ endif()
 ## Build external projects
 #########################################################
 
-set(WEBODF_VERSION v0.5.7)
+set(WEBODF_VERSION v0.5.8)
 ExternalProject_Add(
     WebODF
     GIT_REPOSITORY https://github.com/kogmbh/WebODF.git
@@ -124,7 +124,7 @@ ExternalProject_Add(
     INSTALL_COMMAND ""
 )
 
-set(PDFJS_VERSION v1.1.1)
+set(PDFJS_VERSION v1.1.114)
 ExternalProject_Add(
     PDFjs
     GIT_REPOSITORY https://github.com/mozilla/pdf.js.git
@@ -133,7 +133,7 @@ ExternalProject_Add(
     UPDATE_COMMAND ""
     CONFIGURE_COMMAND ""
     BUILD_IN_SOURCE "1"
-    BUILD_COMMAND node make generic
+    BUILD_COMMAND npm install && node make generic
     INSTALL_COMMAND ""
 )
 
