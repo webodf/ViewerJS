@@ -65,6 +65,7 @@ function PDFViewerPlugin() {
             FINISHED: 2,
             RUNNINGOUTDATED: 3
         },
+        TEXT_LAYER_RENDER_DELAY = 200, // ms
         container = null,
         pdfDocument = null,
         pageViewScroll = null,
@@ -227,6 +228,7 @@ function PDFViewerPlugin() {
         });
         page.getTextContent().then(function (textContent) {
             textLayer.setTextContent(textContent);
+            textLayer.render(TEXT_LAYER_RENDER_DELAY);
         });
         pageText[page.pageIndex] = textLayer;
 
