@@ -91,9 +91,12 @@ select {
     color: #F2F2F2;
     line-height: 14px;
     font-family: sans-serif;
-}
-#documentName {
+
     font-size: 14px;
+    white-space: nowrap;
+    margin-right: 100px; /* To be adjusted if more icons to show */
+    overflow: hidden;
+    text-overflow: ellipsis;    
 }
 
 #toolbarContainer {
