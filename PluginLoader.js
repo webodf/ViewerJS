@@ -71,7 +71,29 @@
             },
             path: "./PDFViewerPlugin",
             getClass: function() { return PDFViewerPlugin; }
-        }
+        },
+	(function() {
+		var imageMimetypes = [
+			'image/jpeg',
+			'image/pjpeg',
+			'image/gif',
+			'image/png'];
+		var imageFileExtensions = [
+			'png',
+			'jpg',
+			'jpeg',
+			'gif'];
+		return {
+			supportsMimetype: function(mimetype) {
+				return (imageMimetypes.indexOf(mimetype) !== -1);
+			},
+			supportsFileExtension: function(extension) {
+				return (imageFileExtensions.indexOf(extension) !== -1);
+			},
+			path: "./ImageViewerPlugin",
+			getClass: function() { return ImageViewerPlugin; }
+		};
+	}())
     ];
 
 
