@@ -25,22 +25,14 @@ function ImageViewerPlugin() {
 
   var self = this;
 
-  this.initialize = function (viewerElement, documentUrl) {
-    var img = new Image();
-    img.onload = function () {
-      self.setImage(img, viewerElement);
-    };
-    // @todo Handle the error when unable to load the image.
-    img.src = documentUrl;
-  };
+  this.initialize = function(viewerElement, documentUrl) {
+    self.imgElement = document.createElement("img");
+    self.imgElement.setAttribute('src', documentUrl);
 
-  function loadScript(path, callback) {
-    var script = document.createElement('script');
-    script.async = false;
-    script.src = path;
-    script.type = 'text/javascript';
-    script.onload = callback || script.onload;
-    document.getElementsByTagName('head')[0].appendChild(script);
+    viewerElement.appendChild(self.imgElement);
+    viewerElement.style.overflow = "auto";
+
+    self.onLoad();
   }
 
   function scrollIntoView(elem) {}
@@ -51,25 +43,6 @@ function ImageViewerPlugin() {
 
   function getPageText(page) {}
 
-  this.setImage = function (image, container) {
-    var domPage, image_container;
-    domPage = document.createElement('div');
-    domPage.id = 'pageContainer1';
-    domPage.className = 'page';
-    image_container = document.createElement('img');
-    image_container.src = image.src;
-    container.appendChild(domPage);
-    image_container.width = domPage.clientWidth;
-    self.image_container = image_container;
-    self.original_width = image.width;
-    self.original_height = domPage.clientHeight;
-    domPage.appendChild(image_container);
-    self.domPage = domPage;
-    self.setZoomLevel(image_container.width / image.width);
-    self.onLoad(image_container.width / image.width);
-  };
-
-
   this.isSlideshow = function () {
     return false;
   };
@@ -77,48 +50,42 @@ function ImageViewerPlugin() {
   this.onLoad = function (zoomlevel) {};
 
   this.getWidth = function () {
-    return self.image_container.width;
+    return self.imgElement.width;
   };
 
   this.getHeight = function () {
-    return self.image_container.height;
+    return self.imgElement.height;
   };
 
-  this.fitToWidth = function (width) {};
+  this.fitToWidth = function (width) {
+	  self.imgElement.width = width;
+  };
 
-  this.fitToHeight = function (height) {};
+  this.fitToHeight = function (height) {
+	  self.imgElement.height = height;
+  };
 
-  this.fitToPage = function (width, height) {};
+  this.fitToPage = function (width, height) {
+	  self.imgElement.width = width;
+  };
 
-  this.fitSmart = function (width) {};
+  this.fitSmart = function (width) {
+	  self.imgElement.width = width;
+  };
 
   this.getZoomLevel = function () {
-    return self.zoom;
+	  return self.imgElement.width / self.imgElement.naturalWidth;
   };
 
   this.setZoomLevel = function (value) {
-    self.zoom = value;
-    self.image_container.width = self.original_width * value;
-    if (self.image_container.width > self.domPage.clientWidth) {
-      self.triggerScrollBars(true);
-    } else {
-      self.triggerScrollBars(false);
-    }
+    self.imgElement.width = value * self.imgElement.naturalWidth;
   };
 
-  // Sometimes happen the scrollbars get under the toolbars, we must
-  // find a way to prevent it, but playing with css in this way is not
-  // the best solution.
+  this.getPages = function () {
+	  return [self.imgElement];
+  }
+
   this.triggerScrollBars = function (enable) {
-    /*
-    if (true === enable) {
-      document.getElementById('toolbarContainer').style.marginBottom = '10px';
-      document.getElementById('toolbarContainer').style.width = (self.domPage.clientWidth - 20) + 'px';
-    } else {
-      document.getElementById('toolbarContainer').style.marginBottom = '0';
-      document.getElementById('toolbarContainer').style.width = (self.domPage.clientWidth) + 'px';
-    }
-    */
   };
 
   this.onScroll = function () {
@@ -145,6 +112,6 @@ function ImageViewerPlugin() {
   this.showPage = function (n) {};
 
   this.getPluginURL = function () {
-    return "https://github.com/mozilla/pdf.js/";
+    return "http://viewerjs.org/";
   };
 }
