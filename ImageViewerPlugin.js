@@ -3,7 +3,8 @@ function ImageViewerPlugin() {
 
 	var imgElement = undefined,
 		self = this,
-		rotation = 0;
+		rotation = 0,
+		currentPage = 1;
 
 	function initCSS() {
 		var pluginCSS;
@@ -79,6 +80,7 @@ function ImageViewerPlugin() {
 		self.onLoad();
 		
 		initCSS();
+		initButtons();
 	};
 
 	this.isSlideshow = function () {
@@ -113,11 +115,15 @@ function ImageViewerPlugin() {
 
 	// return a list of tuples (pagename, pagenode)
 	this.getPages = function () {
-		return [imgElement];
+		return [1, 2];
 	};
 
 	this.showPage = function (n) {
-		initButtons();
+		if(n === currentPage) {
+			imgElement.parentNode.scrollTop -= 100;
+		} else {
+			imgElement.parentNode.scrollTop += 100;
+		}
 	};
 
 	this.getPluginName = function () {
