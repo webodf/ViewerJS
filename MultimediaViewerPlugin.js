@@ -31,7 +31,7 @@ function MultimediaViewerPlugin() {
 		viewerElement.style.overflow = "auto";
 		
 		// init viewerjs
-		videojs(document.getElementById('multimedia_viewer'), {controls:'enabled'}, function() {
+		videojs(document.getElementById('multimedia_viewer'), {controls:'enabled', techOrder:['flash','html5']}, function() {
 		  // This is functionally the same as the previous example.
 		});
 
