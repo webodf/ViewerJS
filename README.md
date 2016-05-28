@@ -21,7 +21,7 @@ You can find additional information, some usage guides, and live examples at [th
 ViewerJS uses [`cmake`](http://cmake.org/). Just follow these steps:
 
 ```bash
-git clone git@github.com:kogmbh/ViewerJS.git
+git clone http://github.com/kogmbh/ViewerJS.git
 mkdir build
 cd build
 cmake ../ViewerJS
