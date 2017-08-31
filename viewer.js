@@ -274,7 +274,7 @@ function Viewer(viewerPlugin, parameters) {
         document.title = parameters.title;
         var documentName = document.getElementById('documentName');
         documentName.innerHTML = "";
-        documentName.appendChild(documentName.ownerDocument.createTextNode(parameters.title));
+        documentName.appendChild(documentName.ownerDocument.createTextNode(decodeURIComponent(parameters.title)));
 
         viewerPlugin.onLoad = function () {
             document.getElementById('pluginVersion').innerHTML = viewerPlugin.getPluginVersion();
