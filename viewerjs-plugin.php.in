@@ -123,8 +123,8 @@ function viewerjs_media_send_to_editor($html, $send_id, $attachment) {
 	$post = get_post($pid, ARRAY_A);
 	if (preg_match('/^application\/(vnd\.oasis\.opendocument|pdf)/', $post['post_mime_type'])) {
 			// place shortcode
-			preg_match('/^http:\/\/[^\/]*(\/.*)$/', $attachment['url'], $matches);
-			$document_url = $matches[1];
+			preg_match('/^http(s)?:\/\/[^\/]*(\/.*)$/', $attachment['url'], $matches);
+			$document_url = $matches[0];
 			return "[viewerjs ".$document_url."]";
 	}
 	return $html;
