@@ -1,12 +1,12 @@
 # ViewerJS
 
-ViewerJS combines a number of excellent open source tools that are built on HTML and javascript. ViewerJS was funded by [NLnet foundation](https://nlnet.nl) and developed by [KO GmbH](http://kogmbh.com).
+ViewerJS combines a number of excellent open source tools that are built on HTML and javascript. ViewerJS was funded by [NLnet foundation](https://nlnet.nl) and developed by KO GmbH.
 
 The heavy lifting in ViewerJS is done by these awesome projects:
 
 ### WebODF
 
-WebODF is a JavaScript library created by [KO GmbH](http://kogmbh.com). It was started by Jos van den Oever at KO and is now developed by a growing team including external collaborators. It makes it easy to add Open Document Format (ODF) support to your website and to your mobile or desktop applications. It uses HTML and CSS to display ODF documents.
+WebODF is a JavaScript library created by KO GmbH. It was started by Jos van den Oever at KO and is now developed by a growing team including external collaborators. It makes it easy to add Open Document Format (ODF) support to your website and to your mobile or desktop applications. It uses HTML and CSS to display ODF documents.
 
 ### PDF.js
 
@@ -40,4 +40,4 @@ ViewerJS is a Free Software project. All code is available under the AGPL.
 
 If you are interested in using ViewerJS in your commercial product
 (and do not want to disclose your sources / obey AGPL),
-contact [KO GmbH](http://kogmbh.com) for a commercial license.
+contact [license@viewerjs.org](mailto:license@viewerjs.org) for a commercial license.
