@@ -348,9 +348,13 @@ function Viewer(viewerPlugin, parameters) {
      * @return {undefined}
      */
     this.download = function () {
-        var documentUrl = url.split('#')[0];
-        documentUrl += '#viewer.action=download';
-        window.open(documentUrl, '_parent');
+        if(url.indexOf('?downloadUrl=') !== -1) {
+            window.open(url.split('?downloadUrl=')[1], '_blank');
+        } else {
+            var documentUrl = url.split('#')[0];
+            documentUrl += '#viewer.action=download';
+            window.open(documentUrl, '_parent');
+        }
     };
 
     /**
