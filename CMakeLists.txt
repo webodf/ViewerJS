@@ -124,7 +124,7 @@ ExternalProject_Add(
     INSTALL_COMMAND ""
 )
 
-set(PDFJS_VERSION v1.1.114)
+set(PDFJS_VERSION v2.5.207)
 ExternalProject_Add(
     PDFjs
     GIT_REPOSITORY https://github.com/mozilla/pdf.js.git
@@ -133,7 +133,7 @@ ExternalProject_Add(
     UPDATE_COMMAND ""
     CONFIGURE_COMMAND ""
     BUILD_IN_SOURCE "1"
-    BUILD_COMMAND npm install && node make generic
+    BUILD_COMMAND npm install && gulp generic
     INSTALL_COMMAND ""
 )
 
@@ -261,8 +261,8 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/example.local.css ${VIEWER_BUILD_DIR}/ViewerJS/example.local.css
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${WEBODF_BUILD_DIR}/webodf/webodf.js ${VIEWER_BUILD_DIR}/ViewerJS
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_BINARY_DIR}/pdfjsversion.js ${VIEWER_BUILD_DIR}/ViewerJS/pdfjsversion.js
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PDFJS_SOURCE_DIR}/build/pdf.js ${VIEWER_BUILD_DIR}/ViewerJS/pdf.js
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PDFJS_SOURCE_DIR}/build/pdf.worker.js ${VIEWER_BUILD_DIR}/ViewerJS/pdf.worker.js
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PDFJS_SOURCE_DIR}/build/generic/build/pdf.js ${VIEWER_BUILD_DIR}/ViewerJS/pdf.js
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PDFJS_SOURCE_DIR}/build/generic/build/pdf.worker.js ${VIEWER_BUILD_DIR}/ViewerJS/pdf.worker.js
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PDFJS_SOURCE_DIR}/web/compatibility.js ${VIEWER_BUILD_DIR}/ViewerJS/compatibility.js
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PDFJS_SOURCE_DIR}/web/ui_utils.js ${VIEWER_BUILD_DIR}/ViewerJS/ui_utils.js
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PDFJS_SOURCE_DIR}/web/text_layer_builder.js ${VIEWER_BUILD_DIR}/ViewerJS/text_layer_builder.js
